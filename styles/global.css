@@ -1,0 +1,22 @@
+body{
+    margin: 10px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.feedFormReact {
+    padding: 4px
+}
+
+.feedFormReact img{
+    max-height: 500px !important;
+    max-width: 500px !important;
+}
+
+.renderHTML img{
+    max-height: 500px;
+    max-width: 500px;
+}
+

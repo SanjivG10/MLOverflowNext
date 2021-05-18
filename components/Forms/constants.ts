@@ -1,0 +1,1 @@
+export const CODE_OPTIONS = ["tensorflow", "scikit-learn", "caffee", "pytorch", "others"]

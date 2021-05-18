@@ -1,15 +1,33 @@
 {
-  "name": "mloverflow-next",
-  "version": "0.1.0",
-  "private": true,
+  "name": "next-practise",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next",
     "build": "next build",
     "start": "next start"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "next": "10.2.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "@date-io/moment": "^1.3.13",
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/pickers": "^3.3.10",
+    "@types/draft-js": "^0.11.2",
+    "@types/draftjs-to-html": "^0.8.0",
+    "@types/react-draft-wysiwyg": "^1.13.2",
+    "draft-js": "^0.11.7",
+    "draftjs-to-html": "^0.9.1",
+    "moment": "^2.29.1",
+    "next": "^10.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-draft-wysiwyg": "^1.14.7"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.5",
+    "typescript": "^4.2.4"
   }
 }
