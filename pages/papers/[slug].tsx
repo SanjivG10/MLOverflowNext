@@ -160,6 +160,8 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
 
   const data: IPaper = DUMMY_PAPER[0];
 
+  const router = useRouter();
+
   return (
     <div className={classes.root}>
       <Header title={data.title} />
@@ -185,7 +187,18 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
           <div className={classes.beautify}>
             <div className={classes.tags}>
               {data.tags.map((tag: { name: string }) => {
-                return <div className={classes.tag}>{tag.name}</div>;
+                return (
+                  <div
+                    key={tag.name}
+                    className={classes.tag}
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      router.push("/tag?key=" + tag.name);
+                    }}
+                  >
+                    {tag.name}
+                  </div>
+                );
               })}
             </div>
           </div>

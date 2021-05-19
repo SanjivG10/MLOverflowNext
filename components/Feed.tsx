@@ -11,6 +11,7 @@ import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Menu from "./Menu";
 import CardMedia from "@material-ui/core/CardMedia";
+import { useRouter } from "next/router";
 
 export interface IFeed {
   time: string;
@@ -71,8 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Feeds: React.FC<IFeed> = (props: IFeed) => {
   const classes = useStyles();
-  const { time, userImage, username, tags, isOwner, text, id } = props;
+  const { time, userImage, username, tags, isOwner, text, id, slug } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const router = useRouter();
 
   const editFeed = () => {
     closeAnchor();
@@ -91,7 +94,14 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
       <div className={classes.tagContainer}>
         {myTags.map((tag) => {
           return (
-            <div key={tag.name} className={classes.tag}>
+            <div
+              key={tag.name}
+              className={classes.tag}
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                router.push("/tag?key=" + tag.name);
+              }}
+            >
               {tag.name}
             </div>
           );
@@ -109,7 +119,10 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   };
 
   return (
-    <Card className={classes.root}>
+    <Card
+      className={classes.root}
+      onClick={() => router.push("/feeds/" + slug)}
+    >
       <CardHeader
         avatar={
           <Avatar aria-label="recipe">

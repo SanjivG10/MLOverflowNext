@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Paper = (props: IPaper) => {
-  const { title, abstract, link, codes } = props;
+  const { title, abstract, link, codes, slug } = props;
   const classes = useStyles();
 
   return (
@@ -101,13 +101,13 @@ const Paper = (props: IPaper) => {
           rel="noreferer nofollow"
           className={`${classes.link} ${classes.value}`}
         >
-          {codes && codes.link}
+          {codes && codes[0].link}
         </a>
-        {codes && codes.language && (
+        {codes && codes[0].language && (
           <img
             alt=""
             className={classes.langIcon}
-            src={`${codes.language}.svg`}
+            src={`${codes[0].language}.svg`}
           />
         )}
       </div>
