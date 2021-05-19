@@ -5,6 +5,7 @@ import Paper, { IPaper } from "./Paper";
 import { DUMMY_PAPER } from "./../dummy";
 import Link from "next/link";
 import Button from "@material-ui/core/Button";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,8 +36,9 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function PapersList({ original }: { original?: Boolean }) {
+export default function PapersList({ original }: { original?: boolean }) {
   const classes = useStyles();
+  const router = useRouter();
 
   const items = DUMMY_PAPER;
 
@@ -54,7 +56,14 @@ export default function PapersList({ original }: { original?: Boolean }) {
         className={classes.root}
       >
         {items.map((item: IPaper) => {
-          return <Paper key={item.id} {...item} />;
+          return (
+            <div
+              key={item.id}
+              onClick={() => router.push(`/papers/${item.slug}`)}
+            >
+              <Paper {...item} />
+            </div>
+          );
         })}
       </List>
 

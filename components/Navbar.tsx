@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import Link from "next/link";
+import GoogleLogin, { GoogleLoginResponse } from "react-google-login";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   title: {
-    flexGrow: 1,
     "&:hover": {
       cursor: "pointer",
     },
@@ -35,14 +35,55 @@ const useStyles = makeStyles((theme) => ({
   appendText: {
     color: "#bfbfbf",
   },
-  loginButton: {
-    color: "#000",
+  searchBar: {
+    flexGrow: 1,
+    marginLeft: "6%",
+    marginRight: "6%",
+    position: "relative",
+  },
+  search: {
     background: "#fff",
+    height: 40,
+    width: "100%",
+    borderRadius: 10,
+    textAlign: "center",
+    "&:focus": {
+      outline: "none",
+    },
+  },
+  searchIcon: {
+    position: "absolute",
+    height: 20,
+    width: 20,
+    right: 15,
+    top: 10,
+    "&:hover": {
+      transform: "scale(1.2,1.2)",
+    },
   },
 }));
 
 export default function ButtonAppBar() {
   const classes = useStyles();
+
+  const router = useRouter();
+
+  const [search, setSearch] = useState("");
+
+  const responseGoogle = async (response: GoogleLoginResponse) => {
+    const { accessToken, profileObj } = response;
+
+    const login = "auth/google/";
+    let imageUrl;
+
+    imageUrl = profileObj.imageUrl;
+
+    if (!imageUrl) {
+      imageUrl = "custom";
+    }
+  };
+
+  const failGoogle = (error) => {};
 
   return (
     <div className={classes.root}>
@@ -63,7 +104,29 @@ export default function ButtonAppBar() {
               </div>
             </Typography>
           </Link>
-          <Button className={classes.loginButton}>login</Button>
+          <div className={classes.searchBar}>
+            <input
+              placeholder="Search"
+              className={classes.search}
+              value={search}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSearch(e.target.value)
+              }
+            />
+            <img
+              src="/search.svg"
+              className={classes.searchIcon}
+              onClick={() => {
+                if (search) router.push("/search?key=" + search);
+              }}
+            />
+          </div>
+          <GoogleLogin
+            clientId={process.env.NEXT_PUBLIC_GOOGLE_ID || ""}
+            onSuccess={responseGoogle}
+            onFailure={failGoogle}
+            buttonText="Login"
+          />
         </Toolbar>
       </AppBar>
     </div>

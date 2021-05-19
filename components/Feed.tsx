@@ -20,6 +20,7 @@ export interface IFeed {
   isOwner: boolean;
   text: string;
   id: string;
+  slug: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>

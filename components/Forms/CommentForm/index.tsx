@@ -4,7 +4,7 @@ import draftToHtml from "draftjs-to-html";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { EditorState, convertToRaw } from "draft-js";
 import TextEditor from "../TextEditor";
-import { TextField, Button } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { placeholder } from "./constants";
 
 interface IImage {
@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const CommentForm = () => {
-  const [commentType, setCommentType] = useState<"T" | "A" | "V" | "E">("E");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [uploadedImages, setUploadedImages] = useState<IImage[]>([]);
   const [clicked, setClicked] = useState(false);
@@ -71,7 +70,7 @@ const CommentForm = () => {
         >
           Add Comment
         </Button>
-      ) : commentType === "E" ? (
+      ) : (
         <>
           <div className={classes.editor}>
             <TextEditor
@@ -86,7 +85,7 @@ const CommentForm = () => {
             Comment
           </Button>
         </>
-      ) : null}
+      )}
     </div>
   );
 };

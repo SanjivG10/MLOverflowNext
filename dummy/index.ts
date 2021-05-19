@@ -35,7 +35,9 @@ export const DUMMY_PAPER = [{
     }],
     meta: "6 pages, 2 figures",
     publishedDate: new Date().toUTCString(),
-    authors: [{ 'name': 'Philipp Bach' }, { 'name': ' Victor Chernozhukov' }, { 'name': ' Malte S. Kurz' }, { 'name': ' Martin Spindler' }, { 'name': 'Philipp Bach' }, { 'name': ' Victor Chernozhukov' }, { 'name': ' Malte S. Kurz' }, { 'name': ' Martin Spindler' }]
+    authors: [{ 'name': 'Philipp Bach' }, { 'name': ' Victor Chernozhukov' }, { 'name': ' Malte S. Kurz' }, { 'name': ' Martin Spindler' }, { 'name': 'Philipp Bach' }, { 'name': ' Victor Chernozhukov' }, { 'name': ' Malte S. Kurz' }, { 'name': ' Martin Spindler' }
+    ],
+    slug: "attention-is-all-you-need"
 },
 {
     id: '2',
@@ -49,7 +51,8 @@ export const DUMMY_PAPER = [{
     }],
     meta: "6 pages, 2 figures",
     authors: [{ 'name': 'Philipp Bach' }, { 'name': ' Victor Chernozhukov' }, { 'name': ' Malte S. Kurz' }, { 'name': ' Martin Spindler' }],
-    publishedDate: new Date().toUTCString()
+    publishedDate: new Date().toUTCString(),
+    slug: "attention-is-all-you-need"
 }
 ];
 
@@ -61,7 +64,8 @@ export const DUMMY_FEED = [
         username: "SG",
         tags: [{ name: "ml" }, { name: "THE PLACE IS CALLED DHULIKHEL" }, { name: "ai" }],
         isOwner: false,
-        text: "<p>Hello World </p>  <h1>Goodbye World</h1> "
+        text: "<p>Hello World </p>  <h1>Goodbye World</h1> ",
+        slug: "pca-explained"
 
     }, {
         "id": '2',
@@ -70,7 +74,8 @@ export const DUMMY_FEED = [
         username: "Gautam",
         tags: [{ name: "ml" }, { name: "ai" }],
         isOwner: true,
-        text: `<p>Hello World</p><h1>Goodbye World</h1>  `
+        text: `<p>Hello World</p><h1>Goodbye World</h1>`,
+        slug: "attention-paper"
     }, {
         "id": '3',
         userImage: "https://scontent.fktm3-1.fna.fbcdn.net/v/t1.6435-9/185941212_3989895934423718_3710951625450892807_n.jpg?_nc_cat=104&ccb=1-3&_nc_sid=8bfeb9&_nc_ohc=lHvsLUzEsAkAX9PWZC_&_nc_ht=scontent.fktm3-1.fna&oh=8f1952a9fa7fc2f628d4161d92f4dc48&oe=60C4D63F",
@@ -78,7 +83,8 @@ export const DUMMY_FEED = [
         username: "Gautam",
         tags: [{ name: "ml" }, { name: "ai" }],
         isOwner: true,
-        text: `<p>Hello World</p><h1>Goodbye World</h1>  `
+        text: `<p>Hello World</p><h1>Goodbye World</h1>`,
+        slug: "machine-learning-douchebag"
     }
 
 ]
@@ -91,4 +97,12 @@ export const DUMMY_COMMENTS = [
 <p>HTML buttons are defined with the button tag:</p>
 <button>Click me</button>`, isOwner: true, hasVoted: true, hasBookmarked: true, votes: 6454654
     },
+]
+
+export const DUMMY_RESOURCES = [
+    { type: "A", url: "https://audile.tech/" },
+    { type: "V", url: "https://www.youtube.com/watch?v=50nlLm9Gmug" },
+    {
+        type: "T", url: "https://www.typescriptlang.org/docs/handbook/advanced-types.html"
+    }
 ]

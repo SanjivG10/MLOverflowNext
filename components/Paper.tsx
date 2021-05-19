@@ -4,15 +4,17 @@ import { textLimit } from "../helper";
 
 export interface IPaper {
   title: string;
-  tags: string[];
+  tags: { name: string }[];
   abstract: string;
   meta: string;
   link?: string;
   codes?: {
     link: string;
     language: string;
-  };
+  }[];
   id: string;
+  slug: string;
+  datasets?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>

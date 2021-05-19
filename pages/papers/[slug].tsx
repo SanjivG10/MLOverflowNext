@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Header from "../../components/Header";
 import Paper from "@material-ui/core/Paper";
-import { DUMMY_PAPER } from "../../dummy";
+import { DUMMY_COMMENTS, DUMMY_PAPER, DUMMY_RESOURCES } from "../../dummy";
 import { ClassNameMap } from "@material-ui/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
+import PaperResources from "../../components/PaperResources";
+import CommentForm from "../../components/Forms/CommentForm";
+import CommentList from "../../components/CommentList";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 
 interface IProps {}
 interface IPaper {
@@ -28,9 +33,9 @@ interface IPaper {
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     marginTop: 40,
+    margin: 40,
   },
   container: {
-    margin: 40,
     padding: 10,
   },
   title: {
@@ -116,25 +121,59 @@ const useStyles = makeStyles((theme: Theme) => ({
   pdf: {
     textDecoration: "none",
   },
+  comments: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  resourceType: {
+    display: "flex",
+    marginTop: 10,
+  },
+  eachResource: {
+    marginRight: 10,
+  },
+  selectedResource: {
+    background: "#000",
+    color: "#fff",
+    "&:hover": {
+      background: "#000",
+      color: "#fff",
+    },
+  },
+  resourceLink: {
+    marginTop: 10,
+    width: "50%",
+  },
+
+  postLinkButton: {
+    marginTop: 10,
+  },
 }));
 
 const PaperPage: React.FC<IProps> = (props: IProps) => {
   const { query } = useRouter();
   const slug = query.slug;
   const classes = useStyles();
+  const [resourceClicked, setResourceClicked] = useState(false);
+  const [resource, setResource] = useState<string>("");
+  const [resourceType, setResourceType] = useState<string>("");
 
   const data: IPaper = DUMMY_PAPER[0];
 
   return (
     <div className={classes.root}>
-      <Header title="Paper" />
+      <Header title={data.title} />
       <Paper className={classes.container}>
         <div className={classes.beautify}>
           <h2 className={classes.title}>{data.title}</h2>
         </div>
         <div className={classes.authors}>
           {data.authors.map((author) => {
-            return <span className={classes.eachAuthor}>{author.name}</span>;
+            return (
+              <span key={author.name} className={classes.eachAuthor}>
+                {author.name}
+              </span>
+            );
           })}
         </div>
         <div className={classes.beautify}>
@@ -240,7 +279,85 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
             )}
           </AccordionDetails>
         </Accordion>
+
+        <PaperResources data={DUMMY_RESOURCES} />
+
+        {!resourceClicked && (
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => setResourceClicked(true)}
+          >
+            Add Resource
+          </Button>
+        )}
+
+        {resourceClicked && (
+          <>
+            <div>
+              <h2>Choose Resource Type</h2>
+              <div className={classes.resourceType}>
+                <Button
+                  variant="outlined"
+                  className={`${classes.eachResource} ${
+                    resourceType === "A" ? classes.selectedResource : ""
+                  } `}
+                  onClick={() => setResourceType("A")}
+                >
+                  Audio
+                </Button>
+                <Button
+                  variant="outlined"
+                  className={`${classes.eachResource} ${
+                    resourceType === "V" ? classes.selectedResource : ""
+                  } `}
+                  onClick={() => setResourceType("V")}
+                >
+                  Video
+                </Button>
+                <Button
+                  variant="outlined"
+                  className={`${classes.eachResource} ${
+                    resourceType === "T" ? classes.selectedResource : ""
+                  } `}
+                  onClick={() => setResourceType("T")}
+                >
+                  Article
+                </Button>
+              </div>
+              {resourceType !== "" && (
+                <>
+                  <div>
+                    <TextField
+                      id="outlined-basic"
+                      label="Resource Link"
+                      className={classes.resourceLink}
+                      variant="outlined"
+                      value={resource}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setResource(e.target.value)
+                      }
+                    />
+                  </div>
+
+                  <Button
+                    className={classes.postLinkButton}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Post Link
+                  </Button>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </Paper>
+
+      <div className={classes.comments}>
+        <CommentForm />
+        <CommentList comments={DUMMY_COMMENTS} />
+      </div>
     </div>
   );
 };

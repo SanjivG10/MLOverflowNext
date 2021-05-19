@@ -5,9 +5,10 @@ import { DUMMY_FEED } from "../dummy";
 import Link from "next/link";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
+import { useRouter } from "next/router";
 
 type FeedProps = {
-  originalFeed?: Boolean;
+  originalFeed?: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -44,6 +45,8 @@ export default function FeedList({ originalFeed }: FeedProps) {
 
   const items = DUMMY_FEED;
 
+  const router = useRouter();
+
   return (
     <div className={classes.main}>
       {!originalFeed && (
@@ -55,7 +58,10 @@ export default function FeedList({ originalFeed }: FeedProps) {
         {items.map((item: IFeed) => {
           return (
             <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
-              <div className={classes.feed}>
+              <div
+                className={classes.feed}
+                onClick={() => router.push(`/feeds/${item.slug}`)}
+              >
                 <Feed {...item} key={item.id} />;
               </div>
             </Grid>

@@ -63,6 +63,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 36,
     height: 36,
     padding: 2,
+    "&:hover": {
+      transform: "scale(1.3,1.3)",
+    },
   },
   voteContainer: {
     display: "flex",
@@ -77,7 +80,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: 20,
     width: 20,
     position: "absolute",
-    right: "10px !important ",
+    right: "10px ",
+
+    "&:hover": {
+      transform: "scale(1.3,1.3)",
+    },
   },
 }));
 
