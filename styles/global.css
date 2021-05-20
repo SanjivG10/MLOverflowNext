@@ -20,3 +20,13 @@ html {
     max-width: 500px;
 }
 
+
+.removeScrollBar::-webkit-scrollbar {
+  display: none;
+}
+
+.removeScrollBar {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;
+}
+

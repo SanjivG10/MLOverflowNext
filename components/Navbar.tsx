@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -6,6 +6,11 @@ import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import GoogleLogin, { GoogleLoginResponse } from "react-google-login";
 import { useRouter } from "next/router";
+import { UserContext } from "./../pages";
+import {
+  USER_IMAGE_LOCAL_STORAGE,
+  USER_TOKEN_LOCAL_STORAGE,
+} from "../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,29 +66,46 @@ const useStyles = makeStyles((theme) => ({
       transform: "scale(1.2,1.2)",
     },
   },
+  userImage: {
+    borderRadius: "50%",
+    height: 36,
+    width: 36,
+  },
 }));
 
-export default function ButtonAppBar() {
+export default function Navbar() {
   const classes = useStyles();
-
   const router = useRouter();
-
   const [search, setSearch] = useState("");
+
+  const { state, dispatch } = useContext(UserContext);
+
+  useEffect(() => {
+    const token = localStorage.getItem(USER_TOKEN_LOCAL_STORAGE);
+    const img = localStorage.getItem(USER_IMAGE_LOCAL_STORAGE);
+    if (token && img) {
+      dispatch({ type: "loggedIn", payload: { token, img } });
+    } else {
+      dispatch({ type: "loggedOut" });
+    }
+  }, [state.loginStatus]);
 
   const responseGoogle = async (response: GoogleLoginResponse) => {
     const { accessToken, profileObj } = response;
 
     const login = "auth/google/";
-    let imageUrl;
+    let img;
 
-    imageUrl = profileObj.imageUrl;
+    img = profileObj.imageUrl;
 
-    if (!imageUrl) {
-      imageUrl = "custom";
+    if (!img) {
+      img = "/user.svg";
     }
   };
 
-  const failGoogle = (error) => {};
+  const failGoogle = () => {
+    dispatch({ type: "loggedOut" });
+  };
 
   return (
     <div className={classes.root}>
@@ -121,12 +143,24 @@ export default function ButtonAppBar() {
               }}
             />
           </div>
-          <GoogleLogin
-            clientId={process.env.NEXT_PUBLIC_GOOGLE_ID || ""}
-            onSuccess={responseGoogle}
-            onFailure={failGoogle}
-            buttonText="Login"
-          />
+          {state.loginStatus ? (
+            <>
+              <img
+                src={
+                  localStorage.getItem(USER_IMAGE_LOCAL_STORAGE) || "/user.svg"
+                }
+                alt=""
+                className={classes.userImage}
+              />
+            </>
+          ) : (
+            <GoogleLogin
+              clientId={process.env.NEXT_PUBLIC_GOOGLE_ID || ""}
+              onSuccess={responseGoogle}
+              onFailure={failGoogle}
+              buttonText="Login"
+            />
+          )}
         </Toolbar>
       </AppBar>
     </div>

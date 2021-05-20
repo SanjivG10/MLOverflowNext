@@ -11,3 +11,6 @@ export const YK_INFO =
 
 export const DLP_INFO =
   "The definitive and most active FB Group on A.I., Neural Networks and Deep Learning. All things new and interesting on the frontier of A.I. and Deep Learning. Neural networks will redefine what it means to be a smart machine in the years to come";
+
+export const USER_TOKEN_LOCAL_STORAGE = "MLOVERFLOW_TOKEN";
+export const USER_IMAGE_LOCAL_STORAGE = "MLOVERFLOW_IMG"

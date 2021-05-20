@@ -4,6 +4,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { MAIN_LABEL_HOME_PAGE } from "../constants";
 import Link from "next/link";
 import { Button } from "@material-ui/core";
+import { TAGS } from "../dummy";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   homePageContainer: {
@@ -55,24 +57,77 @@ const useStyles = makeStyles((theme) => ({
       background: "#fff",
     },
   },
+
+  tagContainer: {
+    marginLeft: 40,
+    marginRight: 40,
+    marginTop: 20,
+    marginBottom: 10,
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    padding: 2,
+  },
+  tag: {
+    marginLeft: 10,
+    marginTop: 6,
+    background: "#800000",
+    width: "fit-content",
+    marginBottom: 2,
+    color: "white",
+    padding: 4,
+    lineHeight: "100%",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: 4,
+    "&:hover": {
+      background: "#000",
+      color: "#fff",
+      cursor: "pointer",
+    },
+  },
 }));
 
 const Jumbotron = () => {
   const classes = useStyles();
 
+  const router = useRouter();
+
+  const renderTags = (myTags: { name: string }[]) => {
+    return (
+      <div className={classes.tagContainer}>
+        {myTags.map((tag) => {
+          return (
+            <div
+              key={tag.name}
+              className={classes.tag}
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation();
+                router.push("/tag?key=" + tag.name);
+              }}
+            >
+              {tag.name}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div>
       <Paper elevation={3} className={classes.pageIntro}>
         <div className={classes.mainText}>
+          <div className={classes.quote}>
+            sometimes it is the very people who noone imagines anything of{" "}
+          </div>
           <div className={classes.mainLabel}>
             ML<span className={classes.appendText}>Overflow</span>
           </div>
 
           <img src="logo.png" width={80} height={80} />
           <div className={classes.secLabel}>{MAIN_LABEL_HOME_PAGE}</div>
-          <div className={classes.quote}>
-            sometimes it is the very people who noone imagines anything of{" "}
-          </div>
+          {renderTags(TAGS)}
         </div>
         <div className={classes.reportAndPolicyButtonsGroup}>
           <Link href="/report">

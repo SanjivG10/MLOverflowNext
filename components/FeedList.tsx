@@ -5,7 +5,6 @@ import { DUMMY_FEED } from "../dummy";
 import Link from "next/link";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
-import { useRouter } from "next/router";
 
 type FeedProps = {
   originalFeed?: boolean;
@@ -44,8 +43,6 @@ export default function FeedList({ originalFeed }: FeedProps) {
   const classes = useStyles();
 
   const items = DUMMY_FEED;
-
-  const router = useRouter();
 
   return (
     <div className={classes.main}>

@@ -1,5 +1,7 @@
 import { TWP_INFO, YK_INFO, DLP_INFO } from "../constants"
 
+export const TAGS = [{ name: "I AM THE MAN WHO KNOCKS" }, { name: "HE IS " }, { name: "SHE ARE" }, { name: "MACHINE learning is the best thing ever" }, { name: "artificial intelligence" }, { name: "I wish I could be the one who knocks" }, { name: "HERE ARE THE THINGS " }, { name: " THE BOY WHO WAITS " }]
+
 export const QUICK_LINKS = [
     {
         "id": "1",
@@ -64,7 +66,7 @@ export const DUMMY_FEED = [
         username: "SG",
         tags: [{ name: "ml" }, { name: "THE PLACE IS CALLED DHULIKHEL" }, { name: "ai" }],
         isOwner: false,
-        text: "<p>Hello World </p>  <h1>Goodbye World</h1> ",
+        text: "<p>The boy who did it <b>I AM THE ONE WHO KNOCKED!!!</b> </p>",
         slug: "pca-explained"
 
     }, {

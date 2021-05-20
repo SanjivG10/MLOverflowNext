@@ -10,7 +10,6 @@ import Typography from "@material-ui/core/Typography";
 import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Menu from "./Menu";
-import CardMedia from "@material-ui/core/CardMedia";
 import { useRouter } from "next/router";
 
 export interface IFeed {
@@ -28,9 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       height: "100%",
-      "&:hover": {
-        ...theme.styles.onHover,
-      },
     },
     avatar: {
       height: "100%",
@@ -67,6 +63,11 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 0,
       paddingTop: "56.25%",
     },
+    clickPost: {
+      "&:hover": {
+        ...theme.styles.onHover,
+      },
+    },
   })
 );
 
@@ -85,8 +86,10 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   };
 
   const menuOptions = [
-    ...(isOwner ? [{ name: "Edit", onClick: editFeed, icon: "edit.svg" }] : []),
-    { name: "Bookmark", onClick: bookmark, icon: "bookmark.svg" },
+    ...(isOwner
+      ? [{ name: "Edit", onClick: editFeed, icon: "/edit.svg" }]
+      : []),
+    { name: "Bookmark", onClick: bookmark, icon: "/bookmark.svg" },
   ];
 
   const renderTags = (myTags: { name: string }[]) => {
@@ -111,6 +114,7 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   };
 
   const setAnchor = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
 
@@ -119,10 +123,7 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   };
 
   return (
-    <Card
-      className={classes.root}
-      onClick={() => router.push("/feeds/" + slug)}
-    >
+    <Card className={`${classes.root}`}>
       <CardHeader
         avatar={
           <Avatar aria-label="recipe">
@@ -149,12 +150,12 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
         subheader={time}
       />
       {tags && tags.length > 0 && renderTags(tags)}
-      <CardMedia
-        className={classes.media}
-        image="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/LARGE_elevation.jpg/1200px-LARGE_elevation.jpg"
-        title="feed"
-      />
-      <CardContent>
+      <CardContent
+        onClick={() => {
+          router.push("/feeds/" + slug);
+        }}
+        className={classes.clickPost}
+      >
         <Typography variant="body2" color="textSecondary">
           <div
             dangerouslySetInnerHTML={{ __html: text }}
