@@ -5,11 +5,11 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 
 type Option = {
   name: string;
-  onClick: () => void;
+  onClick: (name?: string) => void;
   icon: string;
 };
 
-interface menuOptions {
+interface MenuOptions {
   options: Option[];
   anchor: HTMLElement | null;
   closeAnchor: () => void;
@@ -25,20 +25,20 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const MyMenu: React.FC<menuOptions> = ({ options, anchor, closeAnchor }) => {
+const MyMenu: React.FC<MenuOptions> = ({ options, anchor, closeAnchor }) => {
   const classes = useStyles();
   return (
     <>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchor}
-        keepMounted
-        open={Boolean(anchor)}
-        onClose={closeAnchor}
-      >
+      <Menu anchorEl={anchor} open={anchor != null} onClose={closeAnchor}>
         {options.map((option) => {
           return (
-            <MenuItem onClick={option.onClick} key={option.name}>
+            <MenuItem
+              onClick={() => {
+                option.onClick(option.name);
+                closeAnchor();
+              }}
+              key={option.name}
+            >
               <img src={option.icon} alt="" className={classes.icon} />
               <div>{option.name}</div>
             </MenuItem>

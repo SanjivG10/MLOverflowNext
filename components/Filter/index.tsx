@@ -1,11 +1,12 @@
 import React from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import Dropdown from "./../Dropdown";
+import MenuList from "./../MenuList";
+import Button from "@material-ui/core/Button";
 
 export type OptionType = {
   name: string;
   icon: string;
-  onClick: (filter: string) => void;
+  onClick: (filter?: string) => void;
 };
 
 export interface IFilter {
@@ -21,10 +22,10 @@ interface IProps {
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     display: "flex",
-    background: "#bfbfbf",
+    alignItems: "center",
+    background: "#faf8f9",
     borderRadius: 10,
     margin: 10,
-    padding: 4,
   },
   eachFilter: {
     display: "flex",
@@ -39,24 +40,52 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   icon: {
-    height: 20,
-    width: 20,
-    marginRight: 4,
+    height: 24,
+    width: 24,
+    marginRight: 10,
   },
   label: {},
 }));
 
 export const Filter = (props: IProps) => {
+  const { filters } = props;
+  const [anchors, setAnchors] = React.useState<{
+    [key: string]: null | HTMLElement;
+  }>({});
   const classes = useStyles();
 
-  const { filters } = props;
+  const setAnchor = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    name: string
+  ) => {
+    const anchor = event.currentTarget;
+    let newAnchors = { ...anchors };
+    newAnchors[name] = anchor;
+    setAnchors(newAnchors);
+  };
 
   return (
     <div className={classes.container}>
-      {filters.map((filter) => {
+      {filters.map((filter, index) => {
         return (
           <div className={classes.eachFilter} key={filter.name}>
-            <Dropdown filter={filter} />
+            <Button
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                setAnchor(event, filter.name);
+              }}
+              variant="outlined"
+              color="primary"
+            >
+              <img src={filter.icon} className={classes.icon} />
+              <div>{filter.name}</div>
+            </Button>
+            <MenuList
+              options={filter.options}
+              anchor={anchors[filter.name]}
+              setAnchors={setAnchors}
+              name={filter.name}
+              anchors={anchors}
+            />
           </div>
         );
       })}

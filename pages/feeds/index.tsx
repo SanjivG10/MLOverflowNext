@@ -19,14 +19,7 @@ const FeedPage = () => {
     {
       name: "vote up",
       icon: "/up.svg",
-      onClick: (filter: string) => {
-        setFilter(filter);
-      },
-    },
-    {
-      name: "vote down",
-      icon: "/down.svg",
-      onClick: (filter: string) => {
+      onClick: (filter?: string) => {
         setFilter(filter);
       },
     },
@@ -36,7 +29,7 @@ const FeedPage = () => {
     {
       name: "bookmarked",
       icon: "/bookmark.svg",
-      onClick: (filter: string) => {
+      onClick: (filter?: string) => {
         setFilter(filter);
       },
     },
@@ -44,7 +37,7 @@ const FeedPage = () => {
 
   const filters = [
     {
-      icon: "/up_white.svg",
+      icon: "/up.svg",
       name: "VOTE",
       options: voteFilterOptions,
     },
@@ -55,9 +48,7 @@ const FeedPage = () => {
     },
   ];
 
-  const setFilter = (filter: string) => {
-    console.log(filter);
-  };
+  const setFilter = (filter?: string) => {};
 
   return (
     <div>
