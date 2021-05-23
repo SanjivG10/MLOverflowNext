@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const ValidationTextFieldStyle = withStyles({
   root: {
     "& input:valid + fieldset": {
-      borderColor: "green",
+      borderColor: "black",
       borderWidth: 2,
     },
     "& input:invalid + fieldset": {

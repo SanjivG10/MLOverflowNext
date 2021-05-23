@@ -1,19 +1,21 @@
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Feed, { IFeed } from "./Feed";
-import { DUMMY_FEED } from "../dummy";
 import Link from "next/link";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
 
 type FeedProps = {
   originalFeed?: boolean;
+  data: any;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     main: {},
     root: {
+      display: "flex",
+      flexWrap: "wrap",
       backgroundColor: theme.palette.background.paper,
     },
     feed: { margin: 10 },
@@ -39,10 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function FeedList({ originalFeed }: FeedProps) {
+export default function FeedList({ originalFeed, data }: FeedProps) {
   const classes = useStyles();
-
-  const items = DUMMY_FEED;
 
   return (
     <div className={classes.main}>
@@ -52,7 +52,7 @@ export default function FeedList({ originalFeed }: FeedProps) {
         </Link>
       )}
       <Grid container className={classes.root}>
-        {items.map((item: IFeed) => {
+        {data.map((item: IFeed) => {
           return (
             <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
               <div className={classes.feed} key={item.id}>

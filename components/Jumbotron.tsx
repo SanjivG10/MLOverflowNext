@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { MAIN_LABEL_HOME_PAGE } from "../constants";
 import Link from "next/link";
 import { Button } from "@material-ui/core";
-import { TAGS } from "../dummy";
 import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
@@ -67,6 +66,7 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
     justifyContent: "center",
     padding: 2,
+    overflowWrap: "break-word",
   },
   tag: {
     marginLeft: 10,
@@ -85,10 +85,17 @@ const useStyles = makeStyles((theme) => ({
       color: "#fff",
       cursor: "pointer",
     },
+    overflowWrap: "break-word",
   },
 }));
 
-const Jumbotron = () => {
+const Jumbotron = ({
+  quote,
+  tags,
+}: {
+  quote: string;
+  tags: { name: string }[];
+}) => {
   const classes = useStyles();
 
   const router = useRouter();
@@ -118,16 +125,14 @@ const Jumbotron = () => {
     <div>
       <Paper elevation={3} className={classes.pageIntro}>
         <div className={classes.mainText}>
-          <div className={classes.quote}>
-            sometimes it is the very people who noone imagines anything of{" "}
-          </div>
+          <div className={classes.quote}>{quote}</div>
           <div className={classes.mainLabel}>
             ML<span className={classes.appendText}>Overflow</span>
           </div>
 
           <img src="logo.png" width={80} height={80} />
           <div className={classes.secLabel}>{MAIN_LABEL_HOME_PAGE}</div>
-          {renderTags(TAGS)}
+          {renderTags(tags)}
         </div>
         <div className={classes.reportAndPolicyButtonsGroup}>
           <Link href="/report">

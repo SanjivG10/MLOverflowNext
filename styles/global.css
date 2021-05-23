@@ -17,7 +17,8 @@ html {
 
 .renderHTML img{
     max-height: 500px;
-    max-width: 500px;
+    width: 100%;
+    border-radius: 10px;
 }
 
 
@@ -28,5 +29,15 @@ html {
 .removeScrollBar {
   -ms-overflow-style: none;  
   scrollbar-width: none;
+}
+
+.spinnerContainer {
+    display:"flex";
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.spinner{
+    background: teal;
 }
 

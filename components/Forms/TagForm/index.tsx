@@ -16,6 +16,7 @@ export interface ITags {
   tags: ITag[];
   setTags: ([]) => void;
   label: string;
+  disabled?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -58,6 +59,7 @@ const TagsForm: React.FC<ITags> = (props: ITags) => {
     tags,
     setTags,
     label,
+    disabled,
   } = props;
 
   const [tag, setTag] = useState<ITag>({ name: "" });
@@ -150,7 +152,7 @@ const TagsForm: React.FC<ITags> = (props: ITags) => {
         <div>
           <ValidationTextField
             label={label}
-            disabled={maxNumber === tags.length}
+            disabled={maxNumber === tags.length || disabled}
             onKeyPress={handleKeyPress}
             placeholder={placeholder}
             error={tags.some((eachTag: ITag) => {

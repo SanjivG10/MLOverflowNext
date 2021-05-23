@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     background: "#faf8f9",
     borderRadius: 10,
     margin: 10,
@@ -36,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: "white",
     borderRadius: 4,
     "&:hover": {
-      transform: "scale(1.2,1.2)",
+      transform: "scale(1.1,1.1)",
     },
   },
   icon: {

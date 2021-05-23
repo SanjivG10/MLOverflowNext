@@ -93,24 +93,26 @@ const Paper = (props: IPaper) => {
           {link}
         </a>
       </div>
-      <div className={classes.eachRow}>
-        <img alt="" className={classes.icon} src="code.svg" />
-        <a
-          href={link}
-          target="_blank"
-          rel="noreferer nofollow"
-          className={`${classes.link} ${classes.value}`}
-        >
-          {codes && codes[0].link}
-        </a>
-        {codes && codes[0].language && (
-          <img
-            alt=""
-            className={classes.langIcon}
-            src={`${codes[0].language}.svg`}
-          />
-        )}
-      </div>
+      {codes && codes.length > 0 && (
+        <div className={classes.eachRow}>
+          <img alt="" className={classes.icon} src="code.svg" />
+          <a
+            href={link}
+            target="_blank"
+            rel="noreferer nofollow"
+            className={`${classes.link} ${classes.value}`}
+          >
+            {codes[0].link}
+          </a>
+          {codes[0].language && (
+            <img
+              alt=""
+              className={classes.langIcon}
+              src={`${codes[0].language}.svg`}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };

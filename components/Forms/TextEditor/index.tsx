@@ -12,12 +12,14 @@ interface IProps {
   placeholder: string;
   onEditorStateChange: (newEditorState: any) => void;
   uploadCallback: (file: File) => void;
+  disabled?: boolean;
 }
 export default function TextEditor({
   editorState,
   placeholder,
   onEditorStateChange,
   uploadCallback,
+  disabled,
 }: IProps) {
   const toolbarConfig = {
     options: [
@@ -26,7 +28,6 @@ export default function TextEditor({
       "textAlign",
       "inline",
       "colorPicker",
-      "embedded",
       "emoji",
       "image",
       "remove",
@@ -82,7 +83,7 @@ export default function TextEditor({
       uploadEnabled: true,
       alignmentEnabled: true,
       previewImage: true,
-      inputAccept: "image/gif,image/jpeg,image/jpg,image/png,image/svg",
+      inputAccept: "image/gif,image/jpeg,image/jpg",
       alt: { present: false, mandatory: false },
       defaultSize: {
         height: 500,
@@ -105,6 +106,7 @@ export default function TextEditor({
       wrapperClassName="wrapperFormReact"
       onEditorStateChange={onEditorStateChange}
       stripPastedStyles={true}
+      readOnly={disabled}
     />
   );
 }

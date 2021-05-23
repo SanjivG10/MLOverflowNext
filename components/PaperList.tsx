@@ -2,7 +2,6 @@ import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import Paper, { IPaper } from "./Paper";
-import { DUMMY_PAPER } from "./../dummy";
 import Link from "next/link";
 import Button from "@material-ui/core/Button";
 import { useRouter } from "next/router";
@@ -36,11 +35,15 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function PapersList({ original }: { original?: boolean }) {
+export default function PapersList({
+  original,
+  data,
+}: {
+  original?: boolean;
+  data: any;
+}) {
   const classes = useStyles();
   const router = useRouter();
-
-  const items = DUMMY_PAPER;
 
   return (
     <>
@@ -55,7 +58,7 @@ export default function PapersList({ original }: { original?: boolean }) {
         aria-labelledby="nested-list-subheader"
         className={classes.root}
       >
-        {items.map((item: IPaper) => {
+        {data?.map((item: IPaper) => {
           return (
             <div
               key={item.id}

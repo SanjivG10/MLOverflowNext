@@ -11,12 +11,13 @@ import ShareIcon from "@material-ui/icons/Share";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Menu from "./Menu";
 import { useRouter } from "next/router";
+import moment from "moment";
 
 export interface IFeed {
-  time: string;
+  published_at: string;
   userImage: string;
-  username: string;
-  tags: { name: string }[];
+  user: string;
+  tags?: { name: string }[];
   isOwner: boolean;
   text: string;
   id: string;
@@ -73,7 +74,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Feeds: React.FC<IFeed> = (props: IFeed) => {
   const classes = useStyles();
-  const { time, userImage, username, tags, isOwner, text, id, slug } = props;
+  const { published_at, userImage, user, tags, isOwner, text, id, slug } =
+    props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const router = useRouter();
@@ -146,8 +148,8 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
             />
           </>
         }
-        title={username}
-        subheader={time}
+        title={user}
+        subheader={moment(published_at).fromNow()}
       />
       {tags && tags.length > 0 && renderTags(tags)}
       <CardContent
