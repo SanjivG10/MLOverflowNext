@@ -8,7 +8,7 @@ import { Filter } from "../../components/Filter";
 import { useRouter } from "next/router";
 import axios, { AxiosError } from "axios";
 import { FEED_URL } from "../../hooks/constants";
-import { getAuthHeadersFromCookie } from "../../hooks/requests";
+import { getAuthHeaders, getAuthHeadersFromCookie } from "../../hooks/requests";
 import { useCookies } from "react-cookie";
 import { GetServerSidePropsContext } from "next";
 import { IFeed } from "../../components/Feed";
@@ -45,7 +45,6 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList; err: AxiosError }) => {
 
   const successSubmit = (feed: IFeed) => {
     const newData = { ...data };
-    newData.results = [feed, ...data.results];
     setData(newData);
   };
 
@@ -94,6 +93,13 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList; err: AxiosError }) => {
     if (!bookmark && filter === "bookmarked") {
       queryString += "&bookmark=true";
     }
+
+    const getFilterData = async () => {
+      console.log(FEED_URL + "?" + queryString);
+      // const newFeeds = await axios.get(FEED_URL+"?"+queryString, getAuthHeaders());
+    };
+    getFilterData();
+
     router.push({ pathname: pathname, query: queryString });
   };
 

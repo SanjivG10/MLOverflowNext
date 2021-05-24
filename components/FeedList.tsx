@@ -56,7 +56,7 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
           return (
             <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
               <div className={classes.feed} key={item.id}>
-                <Feed {...item} key={item.id} />;
+                <Feed {...item} key={item.id} />
               </div>
             </Grid>
           );

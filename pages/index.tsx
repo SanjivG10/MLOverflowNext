@@ -6,15 +6,17 @@ import Jumbotron from "./../components/Jumbotron";
 import QuickLinks from "../components/QuickLinks";
 import PaperList from "../components/PaperList";
 import FeedsList from "../components/FeedList";
-import { SLOGAN, ENDPOINTS } from "../constants";
+import { SLOGAN } from "../constants";
 import { userReducer } from "../reducers/userReducer";
 import Modal from "../components/Modal";
 import Button from "@material-ui/core/Button";
 import { fetcher } from "./../hooks/requests";
 import {
-  FEED_AMOUNT_HOME_PAGE,
-  PAPER_AMOUNT_HOME_PAGE,
+  PAPER_URL_HOME,
+  FEED_URL_HOME,
   URL,
+  TAGS_URL,
+  QUOTE_URL,
 } from "../hooks/constants";
 
 const useStyles = makeStyles((theme) => ({
@@ -77,25 +79,21 @@ const Index = ({ feeds, papers, quote, tags }) => {
 };
 
 export async function getStaticProps() {
-  const FEED_URL = "feeds/?home=true&size=" + FEED_AMOUNT_HOME_PAGE;
-  const PAPER_URL = "papers/?home=true&size=" + PAPER_AMOUNT_HOME_PAGE;
-  const TAGS_URL = "tags/";
-
   let papers = [];
   let quote = "";
   let feeds = [];
   let tags = [];
   try {
-    quote = await fetcher(URL + ENDPOINTS.QUOTE_ENDPOINT).then(
-      (quoteResponse) => quoteResponse.quote
-    );
-    feeds = await fetcher(URL + FEED_URL).then(
+    quote = await fetcher(QUOTE_URL).then((quoteResponse) => {
+      return quoteResponse.quote;
+    });
+    feeds = await fetcher(FEED_URL_HOME).then(
       (feedResponse) => feedResponse.results
     );
-    papers = await fetcher(URL + PAPER_URL).then(
+    papers = await fetcher(PAPER_URL_HOME).then(
       (paperResponse) => paperResponse.results
     );
-    tags = await fetcher(URL + TAGS_URL).then((tagsResult) => tagsResult);
+    tags = await fetcher(TAGS_URL).then((tagsResult) => tagsResult);
   } catch (error) {
     console.log(error);
   }

@@ -108,7 +108,8 @@ const CommentList: React.FC<IProps> = ({ comments }) => {
       <div className={classes.label}>RECENT COMMENTS</div>
       {comments.map((comment: IComment) => {
         return (
-          <div className={classes.eachCommentContainer}>
+          //  NEED TO CHANGE HERE
+          <div className={classes.eachCommentContainer} key={comment.text}>
             <div className={classes.voteContainer}>
               <img
                 alt=""

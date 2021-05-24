@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "column",
-      background: "#fff",
       color: "#000",
     },
     modalBody: {
@@ -24,12 +23,15 @@ const useStyles = makeStyles((theme: Theme) =>
       background: "#fff",
       padding: 10,
       margin: 10,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "column",
       outline: "none !important",
       borderRadius: 4,
+      overflow: "scroll",
+      position: "absolute",
+      top: "10%",
+      left: "auto",
+      height: "100%",
+      maxHeight: 500,
+      display: "block",
     },
   })
 );
@@ -57,7 +59,7 @@ const MyModal = (props: IProps) => {
       open={show}
       onClose={handleClose}
     >
-      <div className={classes.modalBody}>
+      <div className={`${classes.modalBody} removeScrollBar`}>
         {children}
         <Button
           color="primary"

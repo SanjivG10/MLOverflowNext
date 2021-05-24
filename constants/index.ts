@@ -15,7 +15,3 @@ export const DLP_INFO =
 export const USER_TOKEN_LOCAL_STORAGE = "MLOVERFLOW_TOKEN";
 export const USER_IMAGE_LOCAL_STORAGE = "MLOVERFLOW_IMG";
 
-
-export const ENDPOINTS = {
-  QUOTE_ENDPOINT: "quote"
-}

@@ -12,6 +12,8 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Menu from "./Menu";
 import { useRouter } from "next/router";
 import moment from "moment";
+import MyModal from "./Modal";
+import FeedForm from "./Forms/FeedForm";
 
 export interface IFeed {
   published_at: string;
@@ -20,8 +22,9 @@ export interface IFeed {
   tags?: { name: string }[];
   isOwner: boolean;
   text: string;
-  id: string;
+  id: number;
   slug: string;
+  editSuccess: (feed: IFeed) => {};
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -69,19 +72,45 @@ const useStyles = makeStyles((theme: Theme) =>
         ...theme.styles.onHover,
       },
     },
+    modal: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      color: "#000",
+      background: "#fff",
+      border: "none !important",
+      outline: "none !important",
+    },
+    modalContainer: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "transparent !important",
+    },
   })
 );
 
 const Feeds: React.FC<IFeed> = (props: IFeed) => {
   const classes = useStyles();
-  const { published_at, userImage, user, tags, isOwner, text, id, slug } =
-    props;
+  const {
+    published_at,
+    userImage,
+    user,
+    tags,
+    isOwner,
+    text,
+    id,
+    slug,
+    editSuccess,
+  } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [open, setOpen] = React.useState(false);
 
   const router = useRouter();
 
   const editFeed = () => {
     closeAnchor();
+    setOpen(true);
   };
   const bookmark = () => {
     closeAnchor();
@@ -124,60 +153,76 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     setAnchorEl(null);
   };
 
-  return (
-    <Card className={`${classes.root}`}>
-      <CardHeader
-        avatar={
-          <Avatar aria-label="recipe">
-            <img
-              src={userImage ? userImage : "/avatar.svg"}
-              alt=""
-              className={classes.avatar}
-            />
-          </Avatar>
-        }
-        action={
-          <>
-            <IconButton aria-label="settings" onClick={setAnchor}>
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              options={menuOptions}
-              anchor={anchorEl}
-              closeAnchor={closeAnchor}
-            />
-          </>
-        }
-        title={user}
-        subheader={moment(published_at).fromNow()}
-      />
-      {tags && tags.length > 0 && renderTags(tags)}
-      <CardContent
-        onClick={() => {
-          router.push("/feeds/" + slug);
-        }}
-        className={classes.clickPost}
-      >
-        <Typography variant="body2" color="textSecondary">
-          <div
-            dangerouslySetInnerHTML={{ __html: text }}
-            className="renderHTML"
-          ></div>
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <img src="/up.svg" alt="asd" className={classes.vote} />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-        <IconButton aria-label="bookmark" onClick={bookmark}>
-          <img src="/bookmark.svg" alt="" className={classes.vote} />
-        </IconButton>
-      </CardActions>
-    </Card>
+  return (
+    <>
+      <Card className={`${classes.root}`}>
+        <CardHeader
+          avatar={
+            <Avatar aria-label="recipe">
+              <img
+                src={userImage ? userImage : "/avatar.svg"}
+                alt=""
+                className={classes.avatar}
+              />
+            </Avatar>
+          }
+          action={
+            <>
+              <IconButton aria-label="settings" onClick={setAnchor}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                options={menuOptions}
+                anchor={anchorEl}
+                closeAnchor={closeAnchor}
+              />
+            </>
+          }
+          title={user}
+          subheader={moment(published_at).fromNow()}
+        />
+        {tags && tags.length > 0 && renderTags(tags)}
+        <CardContent
+          onClick={() => {
+            router.push("/feeds/" + slug);
+          }}
+          className={classes.clickPost}
+        >
+          <Typography variant="body2" color="textSecondary">
+            <div
+              dangerouslySetInnerHTML={{ __html: text }}
+              className="renderHTML"
+            ></div>
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton aria-label="add to favorites">
+            <img src="/up.svg" alt="asd" className={classes.vote} />
+          </IconButton>
+          <IconButton aria-label="share">
+            <ShareIcon />
+          </IconButton>
+
+          <IconButton aria-label="bookmark" onClick={bookmark}>
+            <img src="/bookmark.svg" alt="" className={classes.vote} />
+          </IconButton>
+        </CardActions>
+      </Card>
+
+      <MyModal show={open} setShow={handleClose}>
+        <FeedForm
+          successSubmit={(feed) => {
+            editSuccess(feed);
+            setOpen(false);
+          }}
+          data={props}
+        />
+      </MyModal>
+    </>
   );
 };
 

@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { EditorState, convertToRaw } from "draft-js";
+import {
+  EditorState,
+  convertToRaw,
+  convertFromHTML,
+  ContentState,
+} from "draft-js";
 import Container from "@material-ui/core/Container";
 import { Button, Theme } from "@material-ui/core";
 import draftToHtml from "draftjs-to-html";
@@ -10,7 +15,7 @@ import TextEditor from "./../TextEditor";
 import SlugField from "../SlugField";
 import axios from "axios";
 import { FEED_URL, HOME_URL_WITHOUT_SLASH } from "../../../hooks/constants";
-import { getAuthHeaders, handleAxiosError } from "../../../hooks/requests";
+import { usePost, usePut } from "../../../hooks/requests";
 import {
   tagPlaceHolder,
   placeholder,
@@ -18,9 +23,11 @@ import {
   slug_tip,
 } from "./constants";
 import Spinner from "../../Spinner";
+import { IFeed } from "../../Feed";
 
 interface IProps {
   successSubmit: (obj: any) => void;
+  data?: IFeed;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const TAGS_LENGTH = 5;
 
-const FeedForm = ({ successSubmit }: IProps) => {
+const FeedForm = ({ successSubmit, data }: IProps) => {
   const classes = useStyles();
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [error, setError] = useState("");
@@ -77,13 +84,27 @@ const FeedForm = ({ successSubmit }: IProps) => {
     setEditorState(newEditorState);
   };
 
+  useEffect(() => {
+    if (data && data.id) {
+      if (data.tags) {
+        setTags(data.tags);
+      }
+      setSlug(data.slug);
+      setSlugError(false);
+
+      const html = data.text;
+      const blocksFromHTML = convertFromHTML(html);
+      const newEditorState = ContentState.createFromBlockArray(
+        blocksFromHTML.contentBlocks,
+        blocksFromHTML.entityMap
+      );
+      setEditorState(EditorState.createWithContent(newEditorState));
+      // setEditorState()
+    }
+  }, [data]);
+
   function uploadCallback(file: File) {
     return new Promise(async (resolve, reject) => {
-      const imageObject = {
-        file,
-        localSrc: URL.createObjectURL(file),
-      };
-
       const upload = async (file) => {
         let formData = new FormData();
         formData.append("image", file);
@@ -108,30 +129,41 @@ const FeedForm = ({ successSubmit }: IProps) => {
     });
   }
 
-  const submitFeed = async () => {
-    setPosting(true);
-    const rawState = convertToRaw(editorState.getCurrentContent());
-    const text = draftToHtml(rawState);
+  const editFeed = async (text: string) => {
+    const [feed, [myerr]] = await usePut(FEED_URL + `${data.id}/`, {
+      text,
+      slug,
+      tags,
+    });
+    if (feed.id) {
+      successSubmit(feed);
+    } else {
+      setError(myerr);
+    }
+  };
 
-    try {
-      const { data } = await axios.post(
-        FEED_URL,
-        {
-          text,
-          slug,
-          tags,
-        },
-        getAuthHeaders()
-      );
-      successSubmit(data);
+  const postFeed = async (text: string) => {
+    const [feed, [myerr]] = await usePost(FEED_URL, { text, slug, tags });
+    if (feed.id) {
+      successSubmit(feed);
       setTags([]);
       setSlug("");
       setError("");
       setSlugError(false);
       setEditorState(EditorState.createEmpty());
-    } catch (e) {
-      const err = handleAxiosError(e);
-      setError(err);
+    } else {
+      setError(myerr);
+    }
+  };
+
+  const submitFeed = async () => {
+    setPosting(true);
+    const rawState = convertToRaw(editorState.getCurrentContent());
+    const text = draftToHtml(rawState);
+    if (data && data.id) {
+      editFeed(text);
+    } else {
+      postFeed(text);
     }
     setPosting(false);
   };
@@ -179,7 +211,7 @@ const FeedForm = ({ successSubmit }: IProps) => {
             disabled={!editorState.getCurrentContent().hasText() || slugError}
             onClick={submitFeed}
           >
-            POST
+            {data && data.id ? "Edit" : "POST"}
           </Button>
         )}
       </Container>
