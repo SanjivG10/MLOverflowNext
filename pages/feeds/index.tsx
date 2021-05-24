@@ -6,9 +6,13 @@ import FeedList from "./../../components/FeedList";
 import Container from "@material-ui/core/Container";
 import { Filter } from "../../components/Filter";
 import { useRouter } from "next/router";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { FEED_URL } from "../../hooks/constants";
-import { getAuthHeaders, getAuthHeadersFromCookie } from "../../hooks/requests";
+import {
+  getAuthHeaders,
+  getAuthHeadersFromCookie,
+  useGet,
+} from "../../hooks/requests";
 import { useCookies } from "react-cookie";
 import { GetServerSidePropsContext } from "next";
 import { IFeed } from "../../components/Feed";
@@ -36,12 +40,11 @@ export interface IFeedsList {
   };
 }
 
-const FeedPage = ({ feeds, err }: { feeds: IFeedsList; err: AxiosError }) => {
+const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
   const classes = useStyles();
   const router = useRouter();
 
   const [data, setData] = useState<IFeedsList>(feeds);
-  const [error, setError] = useState<AxiosError>(err);
 
   const successSubmit = (feed: IFeed) => {
     const newData = { ...data };
@@ -95,8 +98,9 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList; err: AxiosError }) => {
     }
 
     const getFilterData = async () => {
-      console.log(FEED_URL + "?" + queryString);
-      // const newFeeds = await axios.get(FEED_URL+"?"+queryString, getAuthHeaders());
+      const URL = FEED_URL + "?" + queryString;
+      const [data, error] = await useGet(URL);
+      setData(data);
     };
     getFilterData();
 
@@ -119,19 +123,15 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList; err: AxiosError }) => {
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   let feeds = {};
-  let error = {};
 
   try {
     const { data } = await axios.get(FEED_URL, getAuthHeadersFromCookie(ctx));
     feeds = data;
-  } catch (err) {
-    error = err;
-  }
+  } catch (err) {}
 
   return {
     props: {
       feeds,
-      error,
     },
   };
 }

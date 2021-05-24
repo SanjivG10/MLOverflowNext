@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -14,6 +14,8 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import MyModal from "./Modal";
 import FeedForm from "./Forms/FeedForm";
+import { usePatch } from "../hooks/requests";
+import { FEED_URL } from "../hooks/constants";
 
 export interface IFeed {
   published_at: string;
@@ -25,6 +27,8 @@ export interface IFeed {
   id: number;
   slug: string;
   editSuccess: (feed: IFeed) => {};
+  hasVoted: boolean;
+  hasBookmarked: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -102,9 +106,14 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     id,
     slug,
     editSuccess,
+    hasBookmarked,
+    hasVoted,
   } = props;
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [open, setOpen] = React.useState(false);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [open, setOpen] = useState(false);
+  const [bookmarked, setBookmarked] = useState(hasBookmarked);
+  const [voted, setVoted] = useState(hasVoted);
 
   const router = useRouter();
 
@@ -112,15 +121,29 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     closeAnchor();
     setOpen(true);
   };
-  const bookmark = () => {
+
+  const bookmark = async () => {
     closeAnchor();
+
+    const FEED_PATCH_URL = FEED_URL + id + "/";
+    const [feed, error] = await usePatch(FEED_PATCH_URL, {
+      bookmark: "bookmark",
+    });
+
+    setBookmarked(feed.hasBookmarked);
   };
 
   const menuOptions = [
     ...(isOwner
       ? [{ name: "Edit", onClick: editFeed, icon: "/edit.svg" }]
       : []),
-    { name: "Bookmark", onClick: bookmark, icon: "/bookmark.svg" },
+    !bookmarked
+      ? { name: "Bookmark", onClick: bookmark, icon: "/bookmark.svg" }
+      : {
+          name: "Bookmarked",
+          onClick: bookmark,
+          icon: "/bookmarked.svg",
+        },
   ];
 
   const renderTags = (myTags: { name: string }[]) => {

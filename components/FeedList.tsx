@@ -52,7 +52,7 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
         </Link>
       )}
       <Grid container className={classes.root}>
-        {data.map((item: IFeed) => {
+        {data?.map((item: IFeed) => {
           return (
             <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
               <div className={classes.feed} key={item.id}>

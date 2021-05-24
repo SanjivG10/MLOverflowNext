@@ -30,6 +30,9 @@ export const getAuthHeadersFromCookie = (ctx: GetServerSidePropsContext) => {
         token = parsedCookies[USER_TOKEN_LOCAL_STORAGE]
     }
 
+    if (!token) {
+        return {}
+    }
 
     return {
         headers: {
@@ -52,6 +55,28 @@ export const handleAxiosError = (error: AxiosError) => {
     }
 }
 
+export const useGet = async (url: string) => {
+    let _data: AxiosResponse<any> | {} = {};
+    let error = "";
+    let code: number;
+
+    try {
+
+        const { data } = await axios.get(url, getAuthHeaders());
+        _data = data;
+    }
+    catch (err) {
+        const [axiosError, errCode] = handleAxiosError(err);
+        error = axiosError;
+        code = errCode;
+    }
+
+    return [_data, error]
+
+}
+
+
+
 export const usePut = async (url: string, val: any) => {
     let _data: AxiosResponse<any> | {} = {};
     let error = "";
@@ -67,6 +92,25 @@ export const usePut = async (url: string, val: any) => {
     }
     return [_data, error]
 }
+
+export const usePatch = async (url: string, val: any) => {
+
+    let _data: AxiosResponse<any> = {};
+    let error = "";
+    let code: number;
+    try {
+        const { data } = await axios.patch(url, val, getAuthHeaders());
+        _data = data;
+    }
+    catch (err) {
+        const [axiosError, axiosErrorCode] = handleAxiosError(err);
+        error = axiosError;
+        code = axiosErrorCode;
+    }
+    return [_data, error]
+}
+
+
 
 export const usePost = async (url: string, val: any) => {
     let _data: AxiosResponse<any> | {} = {};
@@ -84,14 +128,3 @@ export const usePost = async (url: string, val: any) => {
     return [_data, error]
 }
 
-
-export const useGetRequest = (pathname?: string) => {
-    const url = URL + pathname;
-    const { data, error } = useSWR(url, fetcher);
-
-    return {
-        data,
-        isLoading: !error && !data,
-        error
-    }
-}
