@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Feed, { IFeed } from "./Feed";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import { Button } from "@material-ui/core";
 
 type FeedProps = {
   originalFeed?: boolean;
-  data: any;
+  data: IFeed[];
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -38,11 +38,45 @@ const useStyles = makeStyles((theme: Theme) =>
     seeMore: {
       fontSize: 16,
     },
+    noFeedLabel: {
+      margin: 10,
+      fontStyle: "italic",
+      textAlign: "center",
+      marginLeft: "auto",
+      marginRight: "auto",
+      fontSize: 20,
+      fontWeight: "bold",
+    },
   })
 );
 
 export default function FeedList({ originalFeed, data }: FeedProps) {
   const classes = useStyles();
+
+  const [feedsData, setFeedsData] = useState(data);
+
+  useEffect(() => {
+    if (data) {
+      setFeedsData(data);
+    }
+  }, [data]);
+
+  const updateOnDelete = (slug: string) => {
+    const newFeedsData = feedsData.filter((feed: IFeed) => feed.slug !== slug);
+    setFeedsData(newFeedsData);
+  };
+
+  const editSuccess = (feed: IFeed) => {
+    let newFeedsData = [...feedsData];
+    for (let i = 0; i < newFeedsData.length; i++) {
+      const oldFeed = newFeedsData[i];
+      if (oldFeed.id === feed.id) {
+        newFeedsData[i] = feed;
+      }
+    }
+    console.log(newFeedsData, " is the new Feeds data ");
+    setFeedsData(newFeedsData);
+  };
 
   return (
     <div className={classes.main}>
@@ -52,11 +86,19 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
         </Link>
       )}
       <Grid container className={classes.root}>
-        {data?.map((item: IFeed) => {
+        {feedsData?.length === 0 && (
+          <div className={classes.noFeedLabel}>No posts found</div>
+        )}
+        {feedsData?.map((item: IFeed) => {
           return (
             <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
               <div className={classes.feed} key={item.id}>
-                <Feed {...item} key={item.id} />
+                <Feed
+                  editSuccess={editSuccess}
+                  {...item}
+                  key={item.id}
+                  updateOnDelete={updateOnDelete}
+                />
               </div>
             </Grid>
           );

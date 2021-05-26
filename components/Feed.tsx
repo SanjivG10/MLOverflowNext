@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -14,8 +14,10 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import MyModal from "./Modal";
 import FeedForm from "./Forms/FeedForm";
-import { usePatch } from "../hooks/requests";
-import { FEED_URL } from "../hooks/constants";
+import { useDelete, usePatch } from "../hooks/requests";
+import { COPY_FEED_URL, FEED_URL } from "../hooks/constants";
+import Delete from "./Delete";
+import { copyText } from "../helper";
 
 export interface IFeed {
   published_at: string;
@@ -29,12 +31,14 @@ export interface IFeed {
   editSuccess: (feed: IFeed) => {};
   hasVoted: boolean;
   hasBookmarked: boolean;
+  updateOnDelete?: (slug: string) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       height: "100%",
+      position: "relative",
     },
     avatar: {
       height: "100%",
@@ -108,18 +112,39 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     editSuccess,
     hasBookmarked,
     hasVoted,
+    updateOnDelete,
   } = props;
+
+  const { push } = useRouter();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const [bookmarked, setBookmarked] = useState(hasBookmarked);
   const [voted, setVoted] = useState(hasVoted);
+  const [mode, setMode] = useState("edit");
+  const [animateCopy, setAnimateCopy] = useState(false);
+
+  useEffect(() => {
+    let timer: any;
+    if (animateCopy) {
+      timer = setTimeout(() => {
+        setAnimateCopy(false);
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [animateCopy]);
 
   const router = useRouter();
 
   const editFeed = () => {
     closeAnchor();
     setOpen(true);
+    setMode("edit");
   };
 
   const bookmark = async () => {
@@ -131,11 +156,24 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     });
 
     setBookmarked(feed.hasBookmarked);
+    setVoted(feed.hasVoted);
+  };
+
+  const deleteFeed = () => {
+    closeAnchor();
+    setOpen(true);
+    setMode("delete");
+    if (updateOnDelete) {
+      updateOnDelete(slug);
+    }
   };
 
   const menuOptions = [
     ...(isOwner
-      ? [{ name: "Edit", onClick: editFeed, icon: "/edit.svg" }]
+      ? [
+          { name: "Edit", onClick: editFeed, icon: "/edit.svg" },
+          { name: "Delete", onClick: deleteFeed, icon: "/delete.svg" },
+        ]
       : []),
     !bookmarked
       ? { name: "Bookmark", onClick: bookmark, icon: "/bookmark.svg" }
@@ -178,6 +216,35 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const addVote = async () => {
+    closeAnchor();
+    const FEED_PATCH_URL = FEED_URL + id + "/";
+    const [feed, error] = await usePatch(FEED_PATCH_URL, {
+      vote: "vote",
+    });
+
+    setBookmarked(feed.hasBookmarked);
+    setVoted(feed.hasVoted);
+  };
+
+  const deleteAndRedirect = async () => {
+    const URL = FEED_URL + `${id}/`;
+    const [deletedFeed, error] = await useDelete(URL);
+
+    console.log(deletedFeed, error, " are values ");
+    if (!error) {
+      push("/feeds");
+    }
+
+    setOpen(false);
+  };
+
+  const copyFeedLink = () => {
+    setAnimateCopy(true);
+    const feedURL = COPY_FEED_URL + `${slug}/`;
+    copyText(feedURL);
   };
 
   return (
@@ -223,27 +290,45 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <IconButton aria-label="add to favorites">
-            <img src="/up.svg" alt="asd" className={classes.vote} />
+          <IconButton
+            aria-label="add to favorites"
+            onClick={() => {
+              addVote();
+            }}
+          >
+            <img
+              src={voted ? "/upDone.svg" : "/up.svg"}
+              alt="asd"
+              className={classes.vote}
+            />
           </IconButton>
-          <IconButton aria-label="share">
+          <IconButton aria-label="share" onClick={copyFeedLink}>
             <ShareIcon />
+            {animateCopy && <p className="copyAnimation">copied link</p>}
           </IconButton>
 
           <IconButton aria-label="bookmark" onClick={bookmark}>
-            <img src="/bookmark.svg" alt="" className={classes.vote} />
+            <img
+              src={!bookmarked ? "/bookmark.svg" : "/bookmarked.svg"}
+              alt=""
+              className={classes.vote}
+            />
           </IconButton>
         </CardActions>
       </Card>
 
       <MyModal show={open} setShow={handleClose}>
-        <FeedForm
-          successSubmit={(feed) => {
-            editSuccess(feed);
-            setOpen(false);
-          }}
-          data={props}
-        />
+        {mode === "delete" ? (
+          <Delete title="feed" onDelete={deleteAndRedirect} />
+        ) : (
+          <FeedForm
+            successSubmit={(feed) => {
+              editSuccess(feed);
+              setOpen(false);
+            }}
+            data={props}
+          />
+        )}
       </MyModal>
     </>
   );

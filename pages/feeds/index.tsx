@@ -8,13 +8,9 @@ import { Filter } from "../../components/Filter";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { FEED_URL } from "../../hooks/constants";
-import {
-  getAuthHeaders,
-  getAuthHeadersFromCookie,
-  useGet,
-} from "../../hooks/requests";
+import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { useCookies } from "react-cookie";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { IFeed } from "../../components/Feed";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +43,7 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
   const [data, setData] = useState<IFeedsList>(feeds);
 
   const successSubmit = (feed: IFeed) => {
-    const newData = { ...data };
+    const newData = { ...data, results: [feed, ...data.results] };
     setData(newData);
   };
 
@@ -121,19 +117,21 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
   );
 };
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-  let feeds = {};
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { data } = await axios.get(FEED_URL, getAuthHeadersFromCookie(context));
 
-  try {
-    const { data } = await axios.get(FEED_URL, getAuthHeadersFromCookie(ctx));
-    feeds = data;
-  } catch (err) {}
+  if (!data) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
 
   return {
-    props: {
-      feeds,
-    },
+    props: { feeds: data },
   };
-}
+};
 
 export default FeedPage;

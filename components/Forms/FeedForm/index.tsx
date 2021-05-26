@@ -14,8 +14,12 @@ import { ITag } from "../TagForm";
 import TextEditor from "./../TextEditor";
 import SlugField from "../SlugField";
 import axios from "axios";
-import { FEED_URL, HOME_URL_WITHOUT_SLASH } from "../../../hooks/constants";
-import { usePost, usePut } from "../../../hooks/requests";
+import {
+  FEED_URL,
+  HOME_URL_WITHOUT_SLASH,
+  UPLOAD_IMAGE_URL,
+} from "../../../hooks/constants";
+import { usePost, usePostForImage, usePut } from "../../../hooks/requests";
 import {
   tagPlaceHolder,
   placeholder,
@@ -109,20 +113,17 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
         let formData = new FormData();
         formData.append("image", file);
 
-        try {
-          const { data } = await axios.post(
-            "http://localhost:8000/api/v1/upload/",
-            formData,
-            {
-              headers: {
-                "content-type": "multipart/form-data",
-                authorization: "Token 899608723b13c4ef178337e01a19b7f257ea6093",
-              },
-            }
-          );
+        const [imageData, error] = await usePostForImage(
+          UPLOAD_IMAGE_URL,
+          formData,
+          {
+            "content-type": "multipart/form-data",
+          }
+        );
 
-          resolve({ data: { link: HOME_URL_WITHOUT_SLASH + data.src } });
-        } catch (error) {}
+        if (!error) {
+          resolve({ data: { link: HOME_URL_WITHOUT_SLASH + imageData.src } });
+        }
       };
 
       await upload(file);

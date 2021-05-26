@@ -41,3 +41,14 @@ html {
     background: teal;
 }
 
+@keyframes animateUp {
+  from {top: -30px;}
+  to {top: -50px;}
+}
+
+.copyAnimation {
+    font-size: 12px;
+    position: absolute;
+    animation: animateUp 1s; 
+}
+

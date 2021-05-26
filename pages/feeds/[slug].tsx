@@ -4,12 +4,13 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Header from "../../components/Header";
 import Feed, { IFeed } from "../../components/Feed";
-import { DUMMY_COMMENTS } from "../../dummy";
 import CommentForm from "../../components/Forms/CommentForm";
 import CommentList from "./../../components/CommentList";
 import axios from "axios";
-import { FEED_URL } from "../../hooks/constants";
-import { getAuthHeaders, handleAxiosError } from "../../hooks/requests";
+import { COMMENT_URL, FEED_URL } from "../../hooks/constants";
+import { getAuthHeadersFromCookie } from "../../hooks/requests";
+import { GetServerSideProps } from "next";
+import { IComment } from "../../components/Comment";
 
 const useStyles = makeStyles((theme: Theme) => ({
   main: {
@@ -33,41 +34,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   commentList: {},
 }));
 
-const FeedPage: React.FC = () => {
+const FeedPage: React.FC = ({ _data, comments }) => {
   const classes = useStyles();
-  const router = useRouter();
 
-  const [data, setData] = useState<IFeed | any>({});
+  const [data, setData] = useState<IFeed | any>(_data);
+  const [feedComments, setFeedComments] = useState(comments);
   const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    const queryPath = window.location.pathname;
-    const paths = queryPath.split("/");
-
-    if (paths.length === 3) {
-      const slug = paths[2];
-      const getFeed = async () => {
-        try {
-          const { data } = await axios.get(
-            FEED_URL + `${slug}/`,
-            getAuthHeaders()
-          );
-          setData(data);
-        } catch (error) {
-          const [err, code] = handleAxiosError(error);
-          if (code === 404) {
-            router.push("/404");
-          }
-
-          setError(err);
-        }
-      };
-      getFeed();
-    }
-  }, []);
 
   const onEditSuccess = (feed: IFeed) => {
     setData(feed);
+  };
+
+  const onCommentSuccess = (comment: IComment) => {
+    const commentResults = [comment, ...feedComments.results];
+    const newFeedComments = { ...feedComments, results: commentResults };
+    setFeedComments(newFeedComments);
   };
 
   return (
@@ -79,11 +60,11 @@ const FeedPage: React.FC = () => {
             <Feed {...data} editSuccess={onEditSuccess} />
 
             <div className={classes.commentContainer}>
-              <CommentForm />
+              <CommentForm onSuccess={onCommentSuccess} feedId={data.id} />
             </div>
 
             <div className={classes.commentList}>
-              <CommentList comments={DUMMY_COMMENTS} />
+              <CommentList comments={feedComments.results} />
             </div>
           </div>
         </Grid>
@@ -93,3 +74,29 @@ const FeedPage: React.FC = () => {
 };
 
 export default FeedPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.query;
+  const { data } = await axios.get(
+    FEED_URL + `${slug}/`,
+    getAuthHeadersFromCookie(context)
+  );
+
+  const { data: comments } = await axios.get(
+    COMMENT_URL + `?feed=${data.id}`,
+    getAuthHeadersFromCookie(context)
+  );
+
+  if (!data) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { _data: data, comments: comments },
+  };
+};

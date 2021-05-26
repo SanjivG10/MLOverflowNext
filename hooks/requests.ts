@@ -16,6 +16,29 @@ export const getAuthHeaders = () => {
     }
 }
 
+export const usePostForImage = async (url: string, val: any, extraHeaderArgs: any) => {
+
+    let _data: AxiosResponse<any> | {} = {};
+    let error = "";
+    let code: number;
+    try {
+
+        const { data } = await axios.post(url, val, {
+            headers: {
+                ...getAuthHeaders().headers,
+                ...extraHeaderArgs
+            }
+        });
+        _data = data;
+    }
+    catch (err) {
+        const [axiosError, axiosErrorCode] = handleAxiosError(err);
+        error = axiosError;
+        code = axiosErrorCode;
+    }
+    return [_data, error]
+}
+
 export const getAuthHeadersFromCookie = (ctx: GetServerSidePropsContext) => {
     const { req: {
         headers: {
@@ -29,6 +52,8 @@ export const getAuthHeadersFromCookie = (ctx: GetServerSidePropsContext) => {
         const parsedCookies = cookierParser.parse(cookie);
         token = parsedCookies[USER_TOKEN_LOCAL_STORAGE]
     }
+
+    token = "899608723b13c4ef178337e01a19b7f257ea6093";
 
     if (!token) {
         return {}
@@ -110,6 +135,22 @@ export const usePatch = async (url: string, val: any) => {
     return [_data, error]
 }
 
+export const useDelete = async (url: string) => {
+
+    let _data: AxiosResponse<any> | {} = {};
+    let error = "";
+    let code: number;
+    try {
+        const { data } = await axios.delete(url, getAuthHeaders());
+        _data = data;
+    }
+    catch (err) {
+        const [axiosError, axiosErrorCode] = handleAxiosError(err);
+        error = axiosError;
+        code = axiosErrorCode;
+    }
+    return [_data, error]
+}
 
 
 export const usePost = async (url: string, val: any) => {

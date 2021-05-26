@@ -26,12 +26,10 @@ const useStyles = makeStyles((theme: Theme) =>
       outline: "none !important",
       borderRadius: 4,
       overflow: "scroll",
-      position: "absolute",
-      top: "10%",
-      left: "auto",
-      height: "100%",
-      maxHeight: 500,
-      display: "block",
+    },
+    editButton: {
+      display: "flex",
+      justifyContent: "center",
     },
   })
 );
@@ -61,13 +59,15 @@ const MyModal = (props: IProps) => {
     >
       <div className={`${classes.modalBody} removeScrollBar`}>
         {children}
-        <Button
-          color="primary"
-          variant="outlined"
-          onClick={() => handleClose()}
-        >
-          Close
-        </Button>
+        <div className={classes.editButton}>
+          <Button
+            color="primary"
+            variant="outlined"
+            onClick={() => handleClose()}
+          >
+            Close
+          </Button>
+        </div>
       </div>
     </Modal>
   ) : null;
