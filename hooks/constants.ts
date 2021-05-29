@@ -8,6 +8,7 @@ export const COPY_URL = HOME_URL_FOR_COPY;
 export const COPY_FEED_URL = HOME_URL_FOR_COPY + "feeds/"
 export const PAPER_URL = URL + "papers/";
 export const QUOTE_URL = URL + "quote/";
+export const QUICKLINK_URL = URL + "quicklinks/";
 export const COMMENT_URL = URL + "feed-comments/"
 const FEED_AMOUNT_HOME_PAGE = 10;
 const PAPER_AMOUNT_HOME_PAGE = 5;

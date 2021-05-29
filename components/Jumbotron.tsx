@@ -103,7 +103,7 @@ const Jumbotron = ({
   const renderTags = (myTags: { name: string }[]) => {
     return (
       <div className={classes.tagContainer}>
-        {myTags.map((tag) => {
+        {myTags?.map((tag) => {
           return (
             <div
               key={tag.name}

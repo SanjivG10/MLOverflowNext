@@ -1,3 +1,4 @@
+import { Moment } from "moment";
 
 const errorHandler = (field: string, type: string) => {
     switch (type) {
@@ -31,7 +32,7 @@ export const formValidator = (field: string, text: string) => {
     }
 };
 
-export const formValidatorDate = (field: string, date: Date) => {
+export const formValidatorDate = (field: string, date: Moment | null) => {
     if (!date) {
         return `${field} cannot be empty`;
     }

@@ -7,6 +7,14 @@ export const textLimit = (text: string, limit: number = 20) => {
     } else return "";
 };
 
+export const isEmpty = (obj: any) => {
+    for (const prop in obj) {
+        if (obj.hasOwnProperty(prop)) return false;
+    }
+
+    return true;
+};
+
 export const copyText = (valueToCopy: string) => {
     const el = document.createElement("textarea");
     el.value = valueToCopy;

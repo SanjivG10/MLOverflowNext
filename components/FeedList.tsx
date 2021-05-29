@@ -4,10 +4,15 @@ import Feed, { IFeed } from "./Feed";
 import Link from "next/link";
 import Grid from "@material-ui/core/Grid";
 import { Button } from "@material-ui/core";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Spinner from "./Spinner";
+import { IFeedsList } from "../pages/feeds";
+import { useGet } from "../hooks/requests";
+import { isEmpty } from "../helper";
 
 type FeedProps = {
   originalFeed?: boolean;
-  data: IFeed[];
+  data: IFeedsList;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,20 +67,34 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
   }, [data]);
 
   const updateOnDelete = (slug: string) => {
-    const newFeedsData = feedsData.filter((feed: IFeed) => feed.slug !== slug);
-    setFeedsData(newFeedsData);
+    const newFeedsData = feedsData.results.filter(
+      (feed: IFeed) => feed.slug !== slug
+    );
+    setFeedsData({ ...feedsData, results: newFeedsData });
   };
 
   const editSuccess = (feed: IFeed) => {
-    let newFeedsData = [...feedsData];
-    for (let i = 0; i < newFeedsData.length; i++) {
-      const oldFeed = newFeedsData[i];
+    let newFeedsData = { ...feedsData };
+    for (let i = 0; i < newFeedsData.results.length; i++) {
+      const oldFeed = newFeedsData.results[i];
       if (oldFeed.id === feed.id) {
-        newFeedsData[i] = feed;
+        newFeedsData.results[i] = feed;
       }
     }
-    console.log(newFeedsData, " is the new Feeds data ");
     setFeedsData(newFeedsData);
+  };
+
+  const fetchMoreData = async () => {
+    if (feedsData.links.next) {
+      const [data, error] = await useGet(feedsData.links.next);
+      console.log([...feedsData.results, data.results]);
+      if (!isEmpty(data)) {
+        setFeedsData({
+          ...data,
+          results: [...feedsData.results, ...data.results],
+        });
+      }
+    }
   };
 
   return (
@@ -85,25 +104,33 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
           <h1 className={classes.mainLabel}>Feeds</h1>
         </Link>
       )}
-      <Grid container className={classes.root}>
-        {feedsData?.length === 0 && (
-          <div className={classes.noFeedLabel}>No posts found</div>
-        )}
-        {feedsData?.map((item: IFeed) => {
-          return (
-            <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
-              <div className={classes.feed} key={item.id}>
-                <Feed
-                  editSuccess={editSuccess}
-                  {...item}
-                  key={item.id}
-                  updateOnDelete={updateOnDelete}
-                />
-              </div>
-            </Grid>
-          );
-        })}
-      </Grid>
+      <InfiniteScroll
+        dataLength={feedsData.results?.length || 0}
+        next={fetchMoreData}
+        hasMore={Boolean(feedsData.links?.next) || false}
+        loader={<Spinner />}
+      >
+        {" "}
+        <Grid container className={classes.root}>
+          {feedsData.results?.length === 0 && (
+            <div className={classes.noFeedLabel}>No posts found</div>
+          )}
+          {feedsData.results?.map((item: IFeed) => {
+            return (
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
+                <div className={classes.feed} key={item.id}>
+                  <Feed
+                    editSuccess={editSuccess}
+                    {...item}
+                    key={item.id}
+                    updateOnDelete={updateOnDelete}
+                  />
+                </div>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </InfiniteScroll>
 
       {!originalFeed && (
         <Link href="/feeds">

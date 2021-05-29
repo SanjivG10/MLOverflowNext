@@ -42,8 +42,12 @@ export default function DropDown(props: IProps) {
         <MenuItem value="None">
           <em>None</em>
         </MenuItem>
-        {items.map((item: string) => {
-          return <MenuItem value={item}>{item}</MenuItem>;
+        {items.map((item: string, index: number) => {
+          return (
+            <MenuItem value={item} key={index}>
+              {item}
+            </MenuItem>
+          );
         })}
       </Select>
     </FormControl>

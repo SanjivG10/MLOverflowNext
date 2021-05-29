@@ -14,9 +14,9 @@ import { fetcher } from "./../hooks/requests";
 import {
   PAPER_URL_HOME,
   FEED_URL_HOME,
-  URL,
   TAGS_URL,
   QUOTE_URL,
+  QUICKLINK_URL,
 } from "../hooks/constants";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +48,7 @@ export const UserContext = createContext<{
   dispatch: React.Dispatch<any>;
 }>({ state: initialUserState, dispatch: () => null });
 
-const Index = ({ feeds, papers, quote, tags }) => {
+const Index = ({ feeds, papers, quote, tags, quickLinks }) => {
   const classes = useStyles();
 
   const [state, dispatch] = useReducer(userReducer, initialUserState);
@@ -71,7 +71,7 @@ const Index = ({ feeds, papers, quote, tags }) => {
           <Jumbotron quote={quote} tags={tags} />
           <FeedsList data={feeds} />
           <PaperList data={papers} />
-          <QuickLinks />
+          <QuickLinks data={quickLinks} />
         </Container>
       </div>
     </UserContext.Provider>
@@ -79,26 +79,24 @@ const Index = ({ feeds, papers, quote, tags }) => {
 };
 
 export async function getStaticProps() {
-  let papers = [];
+  let papers = {};
   let quote = "";
-  let feeds = [];
+  let feeds = {};
+  let quickLinks = {};
   let tags = [];
   try {
     quote = await fetcher(QUOTE_URL).then((quoteResponse) => {
       return quoteResponse.quote;
     });
-    feeds = await fetcher(FEED_URL_HOME).then(
-      (feedResponse) => feedResponse.results
-    );
-    papers = await fetcher(PAPER_URL_HOME).then(
-      (paperResponse) => paperResponse.results
-    );
+    feeds = await fetcher(FEED_URL_HOME);
+    papers = await fetcher(PAPER_URL_HOME);
     tags = await fetcher(TAGS_URL).then((tagsResult) => tagsResult);
+    quickLinks = await fetcher(QUICKLINK_URL);
   } catch (error) {
     console.log(error);
   }
 
-  return { props: { quote, papers, feeds, tags } };
+  return { props: { quote, papers, feeds, tags, quickLinks } };
 }
 
 export default Index;

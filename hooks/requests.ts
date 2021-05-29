@@ -1,8 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { GetServerSidePropsContext } from 'next'
-import useSWR from 'swr'
 import { USER_TOKEN_LOCAL_STORAGE } from '../constants'
-import { URL } from './constants'
 import * as cookierParser from "cookie"
 
 export const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).then(res => res.json())
@@ -11,7 +9,7 @@ export const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).the
 export const getAuthHeaders = () => {
     return {
         headers: {
-            Authorization: `Token ${localStorage.getItem(USER_TOKEN_LOCAL_STORAGE) || "899608723b13c4ef178337e01a19b7f257ea6093"}`
+            Authorization: `Token ${localStorage.getItem(USER_TOKEN_LOCAL_STORAGE) || "5fd616f63ede09db24c70ed02615ba23206ff20c"}`
         }
     }
 }
@@ -53,7 +51,7 @@ export const getAuthHeadersFromCookie = (ctx: GetServerSidePropsContext) => {
         token = parsedCookies[USER_TOKEN_LOCAL_STORAGE]
     }
 
-    token = "899608723b13c4ef178337e01a19b7f257ea6093";
+    token = "5fd616f63ede09db24c70ed02615ba23206ff20c";
 
     if (!token) {
         return {}

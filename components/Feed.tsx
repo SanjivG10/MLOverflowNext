@@ -143,8 +143,8 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
 
   const editFeed = () => {
     closeAnchor();
-    setOpen(true);
     setMode("edit");
+    setOpen(true);
   };
 
   const bookmark = async () => {
@@ -161,11 +161,8 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
 
   const deleteFeed = () => {
     closeAnchor();
-    setOpen(true);
     setMode("delete");
-    if (updateOnDelete) {
-      updateOnDelete(slug);
-    }
+    setOpen(true);
   };
 
   const menuOptions = [
@@ -233,7 +230,11 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     const URL = FEED_URL + `${id}/`;
     const [deletedFeed, error] = await useDelete(URL);
 
-    console.log(deletedFeed, error, " are values ");
+    if (updateOnDelete) {
+      updateOnDelete(slug);
+      return;
+    }
+
     if (!error) {
       push("/feeds");
     }
@@ -304,7 +305,7 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
           </IconButton>
           <IconButton aria-label="share" onClick={copyFeedLink}>
             <ShareIcon />
-            {animateCopy && <p className="copyAnimation">copied link</p>}
+            {animateCopy && <p className="copyAnimation">link copied</p>}
           </IconButton>
 
           <IconButton aria-label="bookmark" onClick={bookmark}>

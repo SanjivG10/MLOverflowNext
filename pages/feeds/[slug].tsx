@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Header from "../../components/Header";
@@ -64,7 +63,7 @@ const FeedPage: React.FC = ({ _data, comments }) => {
             </div>
 
             <div className={classes.commentList}>
-              <CommentList comments={feedComments.results} />
+              <CommentList comments={feedComments} />
             </div>
           </div>
         </Grid>

@@ -1,10 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { IComment } from "./Comment";
 import Comment from "./Comment";
+import Spinner from "./Spinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useGet } from "../hooks/requests";
+import { isEmpty } from "../helper";
 
 interface IProps {
-  comments: IComment[];
+  comments: {
+    results: IComment[];
+    links: {
+      first: string;
+      last: string;
+      next: null | string;
+      prev: null | string;
+    };
+    meta: {
+      pagination: {
+        page: number;
+        pages: number;
+        count: number;
+      };
+    };
+  };
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -45,15 +64,37 @@ const useStyles = makeStyles((theme: Theme) => ({
 const CommentList: React.FC<IProps> = ({ comments }) => {
   const classes = useStyles();
 
+  const [data, setData] = useState(comments);
+
+  const fetchMoreComments = async () => {
+    if (data.links.next) {
+      const [newComments, error] = await useGet(data.links.next);
+      if (!isEmpty(newComments)) {
+        setData({
+          ...newComments,
+          results: [...data.results, ...newComments.results],
+        });
+      }
+    }
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.label}>COMMENTS</div>
-      {comments?.length === 0 && (
+      {data.results.length === 0 && (
         <div className={classes.noCommentLabel}>No comments found.</div>
       )}
-      {comments?.map((comment: IComment) => {
-        return <Comment {...comment} key={comment.id} />;
-      })}
+
+      <InfiniteScroll
+        dataLength={data.results.length || 0}
+        next={fetchMoreComments}
+        hasMore={Boolean(data.links.next) || false}
+        loader={<Spinner />}
+      >
+        {data.results.map((comment: IComment) => {
+          return <Comment {...comment} key={comment.id} />;
+        })}
+      </InfiniteScroll>
     </div>
   );
 };

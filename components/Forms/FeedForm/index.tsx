@@ -13,7 +13,6 @@ import TagForm from "../TagForm";
 import { ITag } from "../TagForm";
 import TextEditor from "./../TextEditor";
 import SlugField from "../SlugField";
-import axios from "axios";
 import {
   FEED_URL,
   HOME_URL_WITHOUT_SLASH,

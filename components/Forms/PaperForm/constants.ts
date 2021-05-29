@@ -31,20 +31,20 @@ export const ValidationFormAttrs = {
         "fieldName": "link",
         "placeholder": "link of the paper",
         "label": "link",
-        "fieldLength": 100,
+        "fieldLength": 200,
 
     },
     "model": {
         "fieldName": "model",
-        "placeholder": "pre-trained model link",
+        "placeholder": "link of the pre-trained model link",
         "label": "model",
-        "fieldLength": 100,
+        "fieldLength": 200,
     },
     "datasets": {
         fieldName: "datasets",
-        placeholder: "link of the dataset of the paper",
+        placeholder: "link of the related datasets of the paper",
         "label": "datasets",
-        "fieldLength": 100,
+        "fieldLength": 200,
     },
     "code": {
         fieldName: "code",

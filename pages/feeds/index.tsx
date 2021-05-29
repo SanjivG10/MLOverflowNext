@@ -10,7 +10,7 @@ import axios from "axios";
 import { FEED_URL } from "../../hooks/constants";
 import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { useCookies } from "react-cookie";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { GetServerSideProps } from "next";
 import { IFeed } from "../../components/Feed";
 
 const useStyles = makeStyles((theme) => ({
@@ -110,7 +110,7 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
       <div className={classes.postList}>
         <Container>
           <Filter filters={filters} />
-          <FeedList originalFeed={true} data={data.results} />
+          <FeedList originalFeed={true} data={data} />
         </Container>
       </div>
     </div>

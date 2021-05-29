@@ -1,9 +1,11 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState } from "react";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { QUICK_LINKS } from "./../dummy";
+import { IQuickLink } from "./QuickLinkList";
+import Tooltip from "@material-ui/core/Tooltip";
+import Link from "next/link";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   root: {
     flexGrow: 1,
     marginTop: 40,
@@ -14,10 +16,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   img: {
-    width: 80,
-    height: 80,
-    borderRadius: "50%",
-    objectFit: "cover",
+    width: 200,
+    height: 200,
+    borderRadius: 10,
   },
   eachLinkContainer: {
     textAlign: "center",
@@ -25,42 +26,46 @@ const useStyles = makeStyles((theme) => ({
       boxShadow: "2px 2px #F8F9FA",
       transform: "scale(1.05,1.05)",
     },
+    marginTop: 20,
+    marginRight: 20,
   },
   name: {
     marginTop: 10,
     fontSize: 20,
-    wordWrap: "break-word",
   },
   container: {
     display: "flex",
-    justifyContent: "space-around",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "100%",
   },
 }));
 
-const QuickLinks = () => {
+const QuickLinks = ({ data }) => {
   const classes = useStyles();
 
-  const handleClick = (url) => {
-    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
-    if (newWindow) newWindow.opener = null;
-  };
-
-  const items = QUICK_LINKS;
+  const [quickLinks, setQuickLinks] = useState({
+    ...data,
+    results: [...data.results, ...data.results],
+  });
 
   return (
     <Grid className={classes.root}>
       <h1 className={classes.mainLabel}>Quick Links</h1>
       <Grid item>
         <Grid container className={classes.container}>
-          {items.map((item) => (
-            <Grid
-              key={item.id}
-              item
-              className={classes.eachLinkContainer}
-              onClick={() => handleClick(item.link)}
-            >
-              <img src={item.img} alt={item.name} className={classes.img} />
-            </Grid>
+          {quickLinks?.results?.map((item: IQuickLink) => (
+            <Link href={"/quicklinks/" + item.slug} key={item.id}>
+              <Tooltip title={item.name}>
+                <Grid key={item.id} item className={classes.eachLinkContainer}>
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className={classes.img}
+                  />
+                </Grid>
+              </Tooltip>
+            </Link>
           ))}
         </Grid>
       </Grid>

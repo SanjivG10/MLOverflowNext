@@ -14,6 +14,10 @@ import {
   formValidatorDate,
   formValidatorList,
 } from "./../validator";
+import { usePost } from "../../../hooks/requests";
+import { PAPER_URL } from "../../../hooks/constants";
+import { isEmpty } from "../../../helper";
+import { IPaper } from "../../Paper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,7 +46,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function PaperForm() {
+export default function PaperForm({
+  data,
+  onSuccess,
+}: {
+  data?: IPaper;
+  onSuccess: (paper: IPaper) => void;
+}) {
   const classes = useStyles();
   const [title, setTitle] = useState<string>("");
   const [abstract, setAbstract] = useState<string>("");
@@ -64,43 +74,87 @@ export default function PaperForm() {
   const AUTHOR_NUMBER = 20;
   const TAGS_NUMBER = 5;
 
-  const validate = () => {
+  const validate = (onlyVal = false) => {
     let error = formValidator("title", title);
     if (error) {
-      setError(error);
+      if (!onlyVal) {
+        setError(error);
+      }
       return false;
     }
     error = formValidatorList("authors", authors);
     if (error) {
-      setError(error);
+      if (!onlyVal) {
+        setError(error);
+      }
       return false;
     }
     error = formValidatorDate("date", selectedDate);
     if (error) {
-      setError(error);
+      if (!onlyVal) {
+        setError(error);
+      }
       return false;
     }
     error = formValidator("abstract", abstract);
     if (error) {
-      setError(error);
+      if (!onlyVal) {
+        setError(error);
+      }
       return false;
     }
     error = formValidator("link", link);
     if (error) {
-      setError(error);
+      if (!onlyVal) {
+        setError(error);
+      }
+      return false;
+    }
+    if (code === "None" || (codeType && !code) || (code && !codeType)) {
+      if (!onlyVal) {
+        setError("Please put both code type and code");
+      }
       return false;
     }
 
-    error = formValidatorList("tags", tags);
-    if (error) {
-      setError(error);
-      return false;
-    }
     return true;
   };
 
-  const publishPaper = () => {
+  const publishPaper = async () => {
+    setError("");
     const isValidated = validate();
+    if (isValidated) {
+      const [paper, error] = await usePost(PAPER_URL, {
+        title,
+        abstract,
+        meta,
+        link,
+        model,
+        dataset,
+        published_at: selectedDate?.format("YYYY-MM-DD"),
+        codes: [{ link: code, language: codeType }],
+        tags,
+        authors,
+        slug: "mloverflow",
+      });
+
+      if (!isEmpty(paper)) {
+        onSuccess(paper);
+        setAbstract("");
+        setTags([]);
+        setTitle("");
+        setAuthors([]);
+        setCode("");
+        setCodeType("");
+        handleDateChange(null);
+        setMeta("");
+        setLink("");
+        setModel("");
+        setDataset("");
+      } else {
+        setError(error);
+      }
+    }
   };
 
   return (
@@ -282,6 +336,7 @@ export default function PaperForm() {
         color="primary"
         className={classes.postButton}
         onClick={publishPaper}
+        disabled={!validate(true)}
       >
         Post
       </Button>

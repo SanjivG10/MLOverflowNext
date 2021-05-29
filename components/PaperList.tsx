@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import Paper, { IPaper } from "./Paper";
@@ -40,10 +40,33 @@ export default function PapersList({
   data,
 }: {
   original?: boolean;
-  data: any;
+  data: {
+    results: IPaper[];
+    links: {
+      first: string;
+      last: string;
+      next: null | string;
+      prev: null | string;
+    };
+    meta: {
+      pagination: {
+        page: number;
+        pages: number;
+        count: number;
+      };
+    };
+  };
 }) {
   const classes = useStyles();
   const router = useRouter();
+
+  const [papers, setPapers] = useState(data);
+
+  useEffect(() => {
+    if (data) {
+      setPapers(data);
+    }
+  }, [data]);
 
   return (
     <>
@@ -58,7 +81,7 @@ export default function PapersList({
         aria-labelledby="nested-list-subheader"
         className={classes.root}
       >
-        {data?.map((item: IPaper) => {
+        {papers?.results?.map((item: IPaper) => {
           return (
             <div
               key={item.id}

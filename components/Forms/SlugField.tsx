@@ -11,6 +11,7 @@ interface IProps {
   error: boolean;
   setError: React.Dispatch<React.SetStateAction<boolean>>;
   disabled?: boolean;
+  link?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -30,7 +31,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 const SlugField = (props: IProps) => {
   const classes = useStyles();
 
-  const { placeholder, data, setData, tip, error, setError, disabled } = props;
+  const { placeholder, data, setData, tip, error, setError, disabled, link } =
+    props;
   const [tooltip, setToolTip] = useState(tip);
 
   return (
@@ -45,7 +47,7 @@ const SlugField = (props: IProps) => {
             const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/gim;
             const value = e.target.value.toLowerCase();
             setData(value);
-            setToolTip(HOME_URL + "feeds/" + value);
+            setToolTip(HOME_URL + `${link ? link : "/feeds"}/${value}`);
             if (!slugRegex.test(value)) {
               setError(true);
             } else {

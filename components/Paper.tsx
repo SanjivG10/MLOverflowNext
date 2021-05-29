@@ -1,12 +1,16 @@
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { textLimit } from "../helper";
+import { Moment } from "moment";
 
 export interface IPaper {
   title: string;
+  created_at: Moment;
+  published_at: Moment;
   tags: { name: string }[];
   abstract: string;
-  meta: string;
+  authors: { name: string }[];
+  meta?: string;
   link?: string;
   codes?: {
     link: string;
