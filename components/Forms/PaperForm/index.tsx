@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import ValidationTextField from "./../ValidationTextField";
 import { ValidationFormAttrs } from "./constants";
@@ -14,10 +14,11 @@ import {
   formValidatorDate,
   formValidatorList,
 } from "./../validator";
-import { usePost } from "../../../hooks/requests";
+import { usePost, usePut } from "../../../hooks/requests";
 import { PAPER_URL } from "../../../hooks/constants";
 import { isEmpty } from "../../../helper";
 import { IPaper } from "../../Paper";
+import Spinner from "../../Spinner";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -70,6 +71,31 @@ export default function PaperForm({
   const [code, setCode] = useState<string>("");
   const [authors, setAuthors] = useState<ITag[]>([]);
   const [tags, setTags] = useState<ITag[]>([]);
+  const [posting, setPosting] = useState(false);
+
+  useEffect(() => {
+    if (data) {
+      console.log("callling");
+      setTitle(data.title);
+      setAuthors(data.authors);
+      setAbstract(data.abstract);
+      setLink(data.link);
+      setMeta(data.meta || "");
+      setDataset(data.dataset || "");
+      handleDateChange(moment(data.published_at));
+      setModel(data.model || "");
+      setCode(data.codes?.[0].link || "");
+      setCodeType(data.codes?.[0].language || "");
+      setTags(data.tags || []);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (codeType === "None") {
+      setCode("");
+      setCodeType("None");
+    }
+  }, [codeType]);
 
   const AUTHOR_NUMBER = 20;
   const TAGS_NUMBER = 5;
@@ -110,7 +136,7 @@ export default function PaperForm({
       }
       return false;
     }
-    if (code === "None" || (codeType && !code) || (code && !codeType)) {
+    if ((codeType !== "None" && codeType && !code) || (code && !codeType)) {
       if (!onlyVal) {
         setError("Please put both code type and code");
       }
@@ -120,41 +146,88 @@ export default function PaperForm({
     return true;
   };
 
+  const postPaper = async () => {
+    const [paper, error] = await usePost(PAPER_URL, {
+      title,
+      abstract,
+      meta,
+      link,
+      model,
+      dataset,
+      published_at: selectedDate?.format("YYYY-MM-DD"),
+      codes: [{ link: code, language: codeType }],
+      tags,
+      authors,
+      slug: "mloverflow",
+    });
+
+    if (!isEmpty(paper)) {
+      onSuccess(paper);
+      setAbstract("");
+      setTags([]);
+      setTitle("");
+      setAuthors([]);
+      setCode("");
+      setCodeType("");
+      handleDateChange(null);
+      setMeta("");
+      setLink("");
+      setModel("");
+      setDataset("");
+    } else {
+      setError(error);
+    }
+  };
+
+  const editPaper = async () => {
+    const [paper, error] = await usePut(PAPER_URL + `${data.id}/`, {
+      title,
+      abstract,
+      meta,
+      link,
+      model,
+      dataset,
+      published_at: selectedDate?.format("YYYY-MM-DD"),
+      codes: [{ link: code, language: codeType }],
+      tags,
+      authors,
+      slug: "mloverflow",
+    });
+
+    if (!isEmpty(paper)) {
+      onSuccess(paper);
+      setAbstract("");
+      setTags([]);
+      setTitle("");
+      setAuthors([]);
+      setCode("");
+      setCodeType("");
+      handleDateChange(null);
+      setMeta("");
+      setLink("");
+      setModel("");
+      setDataset("");
+    } else {
+      setError(error);
+    }
+  };
+
   const publishPaper = async () => {
+    setPosting(true);
     setError("");
+    if ((code && !codeType) || (!code && codeType) || codeType === "None") {
+      setCode("");
+      setCodeType("");
+    }
     const isValidated = validate();
     if (isValidated) {
-      const [paper, error] = await usePost(PAPER_URL, {
-        title,
-        abstract,
-        meta,
-        link,
-        model,
-        dataset,
-        published_at: selectedDate?.format("YYYY-MM-DD"),
-        codes: [{ link: code, language: codeType }],
-        tags,
-        authors,
-        slug: "mloverflow",
-      });
-
-      if (!isEmpty(paper)) {
-        onSuccess(paper);
-        setAbstract("");
-        setTags([]);
-        setTitle("");
-        setAuthors([]);
-        setCode("");
-        setCodeType("");
-        handleDateChange(null);
-        setMeta("");
-        setLink("");
-        setModel("");
-        setDataset("");
+      if (data && data.id) {
+        editPaper();
       } else {
-        setError(error);
+        postPaper();
       }
     }
+    setPosting(false);
   };
 
   return (
@@ -332,14 +405,18 @@ export default function PaperForm({
         setError={setError}
       />
 
-      <Button
-        color="primary"
-        className={classes.postButton}
-        onClick={publishPaper}
-        disabled={!validate(true)}
-      >
-        Post
-      </Button>
+      {posting ? (
+        <Spinner />
+      ) : (
+        <Button
+          color="primary"
+          className={classes.postButton}
+          onClick={publishPaper}
+          disabled={!validate(true)}
+        >
+          {data && data.id ? "Edit" : "Post"}
+        </Button>
+      )}
 
       {error && <div className={classes.error}>{error}</div>}
     </div>

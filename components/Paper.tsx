@@ -7,18 +7,19 @@ export interface IPaper {
   title: string;
   created_at: Moment;
   published_at: Moment;
-  tags: { name: string }[];
+  tags?: { name: string }[];
   abstract: string;
   authors: { name: string }[];
   meta?: string;
-  link?: string;
+  link: string;
   codes?: {
     link: string;
     language: string;
   }[];
-  id: string;
+  id: number;
   slug: string;
-  datasets?: string;
+  dataset?: string;
+  model?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -67,7 +68,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Paper = (props: IPaper) => {
-  const { title, abstract, link, codes, slug } = props;
+  const { title, abstract, link, codes } = props;
   const classes = useStyles();
 
   return (
@@ -97,7 +98,8 @@ const Paper = (props: IPaper) => {
           {link}
         </a>
       </div>
-      {codes && codes.length > 0 && (
+
+      {codes && codes.length > 0 && codes[0].link && codes[0].language && (
         <div className={classes.eachRow}>
           <img alt="" className={classes.icon} src="code.svg" />
           <a

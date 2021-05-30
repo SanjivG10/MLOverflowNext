@@ -98,8 +98,6 @@ export const useGet = async (url: string) => {
 
 }
 
-
-
 export const usePut = async (url: string, val: any) => {
     let _data: AxiosResponse<any> | {} = {};
     let error = "";
@@ -113,6 +111,7 @@ export const usePut = async (url: string, val: any) => {
         error = axiosError;
         code = axiosErrorCode;
     }
+
     return [_data, error]
 }
 

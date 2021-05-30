@@ -15,6 +15,13 @@ const useStyles = makeStyles((theme: Theme) =>
     nested: {
       paddingLeft: theme.spacing(4),
     },
+    noPaper: {
+      textAlign: "center",
+      marginLeft: "auto",
+      marginRight: "auto",
+      fontSize: 20,
+      fontStyle: "italic",
+    },
     mainLabel: {
       fontSize: 40,
       marginLeft: "auto",
@@ -81,6 +88,9 @@ export default function PapersList({
         aria-labelledby="nested-list-subheader"
         className={classes.root}
       >
+        {papers?.results?.length === 0 && (
+          <h3 className={classes.noPaper}>No Paper found</h3>
+        )}
         {papers?.results?.map((item: IPaper) => {
           return (
             <div

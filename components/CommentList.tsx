@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { IComment } from "./Comment";
 import Comment from "./Comment";
@@ -24,6 +24,7 @@ interface IProps {
       };
     };
   };
+  paper?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -61,10 +62,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const CommentList: React.FC<IProps> = ({ comments }) => {
+const CommentList: React.FC<IProps> = ({ comments, paper }) => {
   const classes = useStyles();
 
   const [data, setData] = useState(comments);
+
+  useEffect(() => {
+    if (comments) {
+      setData(comments);
+    }
+  }, [comments]);
 
   const fetchMoreComments = async () => {
     if (data.links.next) {
@@ -92,7 +99,7 @@ const CommentList: React.FC<IProps> = ({ comments }) => {
         loader={<Spinner />}
       >
         {data.results.map((comment: IComment) => {
-          return <Comment {...comment} key={comment.id} />;
+          return <Comment {...comment} key={comment.id} paper={paper} />;
         })}
       </InfiniteScroll>
     </div>

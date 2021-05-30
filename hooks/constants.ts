@@ -10,6 +10,8 @@ export const PAPER_URL = URL + "papers/";
 export const QUOTE_URL = URL + "quote/";
 export const QUICKLINK_URL = URL + "quicklinks/";
 export const COMMENT_URL = URL + "feed-comments/"
+export const COMMENT_URL_PAPER = URL + "paper-comments/";
+export const RESOURCE_URL = URL + "resources/"
 const FEED_AMOUNT_HOME_PAGE = 10;
 const PAPER_AMOUNT_HOME_PAGE = 5;
 export const PAPER_URL_HOME = PAPER_URL + "?home=true&size=" + PAPER_AMOUNT_HOME_PAGE;

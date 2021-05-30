@@ -15,6 +15,7 @@ import { IComment } from "../../Comment";
 import { usePost, usePostForImage, usePut } from "../../../hooks/requests";
 import {
   COMMENT_URL,
+  COMMENT_URL_PAPER,
   HOME_URL_WITHOUT_SLASH,
   UPLOAD_IMAGE_URL,
 } from "../../../hooks/constants";
@@ -47,10 +48,12 @@ const CommentForm = ({
   onSuccess,
   feedId,
   data,
+  paperComment,
 }: {
   onSuccess: (comment: IComment) => void;
   feedId?: number;
   data?: IComment;
+  paperComment?: boolean;
 }) => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [clicked, setClicked] = useState(false);
@@ -101,12 +104,19 @@ const CommentForm = ({
     const rawState = convertToRaw(editorState.getCurrentContent());
     const text = draftToHtml(rawState);
     if (data && data.id) {
-      const URL = COMMENT_URL + `${data.id}/`;
+      const URL = paperComment
+        ? COMMENT_URL_PAPER + `${data.id}/`
+        : COMMENT_URL + `${data.id}/`;
       const [newComment, error] = await usePut(URL, { text });
-      onSuccess(newComment);
+      console.log(error, " is the error");
+      if (!error) {
+        onSuccess(newComment);
+      }
     } else {
       if (feedId) {
-        const URL = COMMENT_URL + `?feed=${feedId}`;
+        const URL = paperComment
+          ? COMMENT_URL_PAPER + `?paper=${feedId}`
+          : COMMENT_URL + `?feed=${feedId}`;
         const [comment, error] = await usePost(URL, {
           text,
         });

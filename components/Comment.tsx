@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import { COMMENT_URL } from "../hooks/constants";
+import { COMMENT_URL, COMMENT_URL_PAPER } from "../hooks/constants";
 import { useDelete, usePatch } from "../hooks/requests";
 import MyModal from "./Modal";
 import CommentForm from "./Forms/CommentForm";
@@ -92,12 +92,14 @@ export interface IComment {
   hasBookmarked: boolean;
   votes_count: number;
   id: number;
+  paper?: boolean;
 }
 
 const Comment = (props: IComment) => {
   const classes = useStyles();
 
-  const { text, hasVoted, isOwner, hasBookmarked, votes_count, id } = props;
+  const { text, hasVoted, isOwner, hasBookmarked, votes_count, id, paper } =
+    props;
 
   const [bookmarked, setBookmarked] = useState(hasBookmarked);
   const [voted, setVoted] = useState(hasVoted);
@@ -108,7 +110,8 @@ const Comment = (props: IComment) => {
   const [deleted, setDeleted] = useState<boolean>(false);
 
   const addVote = async () => {
-    const COMMENT_PATCH_URL = COMMENT_URL + id + "/";
+    const COMMENT_PATCH_URL =
+      (paper ? COMMENT_URL_PAPER : COMMENT_URL) + id + "/";
     const [comment, error] = await usePatch(COMMENT_PATCH_URL, {
       vote: "vote",
     });
@@ -119,7 +122,8 @@ const Comment = (props: IComment) => {
   };
 
   const bookmark = async () => {
-    const COMMENT_PATCH_URL = COMMENT_URL + id + "/";
+    const COMMENT_PATCH_URL =
+      (paper ? COMMENT_URL_PAPER : COMMENT_URL) + id + "/";
     const [comment, error] = await usePatch(COMMENT_PATCH_URL, {
       bookmark: "bookmark",
     });
@@ -134,7 +138,7 @@ const Comment = (props: IComment) => {
   };
 
   const deleteComment = async () => {
-    const URL = COMMENT_URL + `${id}/`;
+    const URL = paper ? COMMENT_URL_PAPER + `${id}/` : COMMENT_URL + `${id}/`;
     const [delComment, error] = await useDelete(URL);
     if (!error) {
       setDeleted(true);
@@ -201,7 +205,11 @@ const Comment = (props: IComment) => {
         }}
       >
         {mode === "edit" ? (
-          <CommentForm onSuccess={onEditSuccess} data={props} />
+          <CommentForm
+            onSuccess={onEditSuccess}
+            data={props}
+            paperComment={paper}
+          />
         ) : (
           <Delete title="comment" onDelete={deleteComment} />
         )}

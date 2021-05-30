@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Header from "../../components/Header";
 import Paper from "@material-ui/core/Paper";
-import { DUMMY_COMMENTS, DUMMY_PAPER, DUMMY_RESOURCES } from "../../dummy";
+import { DUMMY_RESOURCES } from "../../dummy";
 import { ClassNameMap } from "@material-ui/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
@@ -11,24 +11,28 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
 import PaperResources from "../../components/PaperResources";
-import CommentForm from "../../components/Forms/CommentForm";
-import CommentList from "../../components/CommentList";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-
-interface IProps {}
-interface IPaper {
-  title: string;
-  authors: { name: string }[];
-  abstract: string;
-  publishedDate: string;
-  link: string;
-  model?: string;
-  datasets?: string;
-  meta?: string;
-  tags?: { name: string }[];
-  codes?: { language: string; link: string }[];
-}
+import {
+  COMMENT_URL_PAPER,
+  PAPER_URL,
+  RESOURCE_URL,
+} from "../../hooks/constants";
+import {
+  getAuthHeadersFromCookie,
+  useDelete,
+  usePost,
+} from "../../hooks/requests";
+import { GetServerSideProps } from "next";
+import axios from "axios";
+import MyModal from "../../components/Modal";
+import CommentForm from "../../components/Forms/CommentForm";
+import DeleteForm from "../../components/Delete";
+import PaperForm from "../../components/Forms/PaperForm";
+import { IPaper } from "../../components/Paper";
+import { isEmpty } from "../../helper";
+import CommentList from "../../components/CommentList";
+import { IComment } from "../../components/Comment";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -148,19 +152,81 @@ const useStyles = makeStyles((theme: Theme) => ({
   postLinkButton: {
     marginTop: 10,
   },
+  edit: {
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  editButton: {},
+  deleteButton: {},
+
+  commentContainer: {
+    marginTop: 20,
+  },
+  commentList: {},
 }));
 
-const PaperPage: React.FC<IProps> = (props: IProps) => {
-  const { query } = useRouter();
-  const slug = query.slug;
+const PaperPage: React.FC = ({ _data, _resources, _comments }) => {
   const classes = useStyles();
+  const router = useRouter();
   const [resourceClicked, setResourceClicked] = useState(false);
   const [resource, setResource] = useState<string>("");
   const [resourceType, setResourceType] = useState<string>("");
+  const [show, setShow] = useState(false);
+  const [mode, setMode] = useState("edit");
 
-  const data: IPaper = DUMMY_PAPER[0];
+  const [data, setData] = useState(_data);
+  const [allResources, setAllResources] = useState(_resources);
+  const [paperComments, setPaperComments] = useState(_comments);
 
-  const router = useRouter();
+  const onDeleteSuccess = async () => {
+    setShow(false);
+
+    const [deletedPaper, error] = await useDelete(PAPER_URL + `${data.id}/`);
+    if (!error) {
+      router.push("/papers");
+    }
+  };
+
+  const onEditSuccess = (paper: IPaper) => {
+    setShow(false);
+    setData(paper);
+  };
+
+  const editPaper = () => {
+    setMode("edit");
+    setShow(true);
+  };
+
+  const deletePaper = () => {
+    setMode("delete");
+    setShow(true);
+  };
+
+  const addResource = async () => {
+    const [newResource, error] = await usePost(
+      RESOURCE_URL + `?paper=${data.id}`,
+      {
+        type: resourceType,
+        link: resource,
+      }
+    );
+
+    if (!isEmpty(newResource)) {
+      setResource("");
+      setResourceClicked(false);
+      setResourceType("");
+      setAllResources({
+        ...allResources,
+        results: [newResource, ...allResources.results],
+      });
+    }
+  };
+
+  const onCommentSuccess = (comment: IComment) => {
+    const commentResults = [comment, ...paperComments.results];
+    const newPaperComments = { ...paperComments, results: commentResults };
+    setPaperComments(newPaperComments);
+  };
 
   return (
     <div className={classes.root}>
@@ -170,7 +236,7 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
           <h2 className={classes.title}>{data.title}</h2>
         </div>
         <div className={classes.authors}>
-          {data.authors.map((author) => {
+          {data.authors.map((author: { name: string }) => {
             return (
               <span key={author.name} className={classes.eachAuthor}>
                 {author.name}
@@ -178,6 +244,16 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
             );
           })}
         </div>
+        {data.isOwner && (
+          <div className={classes.edit}>
+            <Button onClick={editPaper} className={classes.editButton}>
+              Edit
+            </Button>
+            <Button onClick={deletePaper} className={classes.deleteButton}>
+              Delete
+            </Button>
+          </div>
+        )}
         <div className={classes.beautify}>
           {specialLabel("abstract", "ABSTRACT", classes)}
           <div className={classes.abstract}>{data.abstract}</div>
@@ -215,13 +291,15 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
           <AccordionDetails className={classes.detail}>
             <div className={classes.beautify}>
               {specialLabel("clock", "PUBLISHED DATE", classes)}
-              <div className={classes.date}>{data.publishedDate}</div>
+              <div className={classes.date}>{data.published_at}</div>
             </div>
 
-            <div className={classes.beautify}>
-              {specialLabel("info", "META", classes)}
-              <div className={classes.meta}>{data.meta}</div>
-            </div>
+            {data.meta && (
+              <div className={classes.beautify}>
+                {specialLabel("info", "META", classes)}
+                <div className={classes.meta}>{data.meta}</div>
+              </div>
+            )}
 
             <div className={classes.beautify}>
               {specialLabel("link", "LINK", classes)}
@@ -257,16 +335,30 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
                 </div>
               )}
 
-            {data.datasets && (
+            {data.dataset && (
               <div className={classes.beautify}>
                 {specialLabel("dataset", "DATASETS", classes)}
                 <a
-                  href={data.datasets}
+                  href={data.dataset}
                   className={`${classes.datasets}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {data.datasets}
+                  {data.dataset}
+                </a>
+              </div>
+            )}
+
+            {data.model && (
+              <div className={classes.beautify}>
+                {specialLabel("model", "MODEL", classes)}
+                <a
+                  href={data.dataset}
+                  className={`${classes.datasets}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {data.model}
                 </a>
               </div>
             )}
@@ -293,7 +385,7 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
           </AccordionDetails>
         </Accordion>
 
-        <PaperResources data={DUMMY_RESOURCES} />
+        <PaperResources data={allResources} />
 
         {!resourceClicked && (
           <Button
@@ -313,27 +405,27 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
                 <Button
                   variant="outlined"
                   className={`${classes.eachResource} ${
-                    resourceType === "A" ? classes.selectedResource : ""
+                    resourceType === "audio" ? classes.selectedResource : ""
                   } `}
-                  onClick={() => setResourceType("A")}
+                  onClick={() => setResourceType("audio")}
                 >
                   Audio
                 </Button>
                 <Button
                   variant="outlined"
                   className={`${classes.eachResource} ${
-                    resourceType === "V" ? classes.selectedResource : ""
+                    resourceType === "video" ? classes.selectedResource : ""
                   } `}
-                  onClick={() => setResourceType("V")}
+                  onClick={() => setResourceType("video")}
                 >
                   Video
                 </Button>
                 <Button
                   variant="outlined"
                   className={`${classes.eachResource} ${
-                    resourceType === "T" ? classes.selectedResource : ""
+                    resourceType === "article" ? classes.selectedResource : ""
                   } `}
-                  onClick={() => setResourceType("T")}
+                  onClick={() => setResourceType("article")}
                 >
                   Article
                 </Button>
@@ -343,7 +435,9 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
                   <div>
                     <TextField
                       id="outlined-basic"
-                      label="Resource Link"
+                      label={`${
+                        resourceType ? resourceType : "resource"
+                      }  link`}
                       className={classes.resourceLink}
                       variant="outlined"
                       value={resource}
@@ -357,6 +451,8 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
                     className={classes.postLinkButton}
                     variant="outlined"
                     color="primary"
+                    onClick={addResource}
+                    disabled={!resource || !resourceType}
                   >
                     Post Link
                   </Button>
@@ -367,9 +463,24 @@ const PaperPage: React.FC<IProps> = (props: IProps) => {
         )}
       </Paper>
 
-      <div className={classes.comments}>
-        <CommentForm />
-        <CommentList comments={DUMMY_COMMENTS} />
+      <MyModal show={show} setShow={setShow}>
+        {mode === "delete" ? (
+          <DeleteForm title="paper" onDelete={onDeleteSuccess} />
+        ) : (
+          <PaperForm data={data} onSuccess={onEditSuccess} />
+        )}
+      </MyModal>
+
+      <div className={classes.commentContainer}>
+        <CommentForm
+          onSuccess={onCommentSuccess}
+          feedId={data.id}
+          paperComment
+        />
+      </div>
+
+      <div className={classes.commentList}>
+        <CommentList comments={paperComments} paper />
       </div>
     </div>
   );
@@ -386,6 +497,50 @@ const specialLabel = (icon: string, label: string, classes: ClassNameMap) => {
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { slug } = context.query;
+  let _data = {};
+  let _resources = {};
+  let _comments = {};
+
+  try {
+    let { data } = await axios.get(
+      PAPER_URL + `${slug}/`,
+      getAuthHeadersFromCookie(context)
+    );
+    _data = data;
+    const { data: comments } = await axios.get(
+      COMMENT_URL_PAPER + `?paper=${data.id}`,
+      getAuthHeadersFromCookie(context)
+    );
+    _comments = comments;
+    const { data: resources } = await axios.get(
+      RESOURCE_URL + `?paper=${data.id}`,
+      getAuthHeadersFromCookie(context)
+    );
+
+    _resources = resources;
+  } catch (error) {}
+
+  // const { data: comments } = await axios.get(
+  //   COMMENT_URL + `?paper=${data.id}`,
+  //   getAuthHeadersFromCookie(context)
+  // );
+
+  if (isEmpty(_data)) {
+    return {
+      redirect: {
+        destination: "/papers",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { _data, _comments, _resources },
+  };
 };
 
 export default PaperPage;
