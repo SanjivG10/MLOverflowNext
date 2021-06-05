@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -18,6 +18,7 @@ import { useDelete, usePatch } from "../hooks/requests";
 import { COPY_FEED_URL, FEED_URL } from "../hooks/constants";
 import Delete from "./Delete";
 import { copyText } from "../helper";
+import { UserContext } from "../pages/_app";
 
 export interface IFeed {
   published_at: string;
@@ -32,6 +33,7 @@ export interface IFeed {
   hasVoted: boolean;
   hasBookmarked: boolean;
   updateOnDelete?: (slug: string) => void;
+  home?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -113,6 +115,7 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     hasBookmarked,
     hasVoted,
     updateOnDelete,
+    home,
   } = props;
 
   const { push } = useRouter();
@@ -123,6 +126,8 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   const [voted, setVoted] = useState(hasVoted);
   const [mode, setMode] = useState("edit");
   const [animateCopy, setAnimateCopy] = useState(false);
+
+  const { state, dispatch } = useContext(UserContext);
 
   useEffect(() => {
     let timer: any;
@@ -144,12 +149,21 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   const editFeed = () => {
     closeAnchor();
     setMode("edit");
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
+
     setOpen(true);
   };
 
   const bookmark = async () => {
     closeAnchor();
 
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     const FEED_PATCH_URL = FEED_URL + id + "/";
     const [feed, error] = await usePatch(FEED_PATCH_URL, {
       bookmark: "bookmark",
@@ -162,6 +176,10 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   const deleteFeed = () => {
     closeAnchor();
     setMode("delete");
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     setOpen(true);
   };
 
@@ -191,7 +209,7 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
               className={classes.tag}
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
-                router.push("/tag?key=" + tag.name);
+                router.push("/search?key=" + tag.name);
               }}
             >
               {tag.name}
@@ -217,6 +235,11 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
 
   const addVote = async () => {
     closeAnchor();
+
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     const FEED_PATCH_URL = FEED_URL + id + "/";
     const [feed, error] = await usePatch(FEED_PATCH_URL, {
       vote: "vote",
@@ -227,6 +250,10 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
   };
 
   const deleteAndRedirect = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     const URL = FEED_URL + `${id}/`;
     const [deletedFeed, error] = await useDelete(URL);
 
@@ -262,16 +289,18 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
             </Avatar>
           }
           action={
-            <>
-              <IconButton aria-label="settings" onClick={setAnchor}>
-                <MoreVertIcon />
-              </IconButton>
-              <Menu
-                options={menuOptions}
-                anchor={anchorEl}
-                closeAnchor={closeAnchor}
-              />
-            </>
+            !home && (
+              <>
+                <IconButton aria-label="settings" onClick={setAnchor}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  options={menuOptions}
+                  anchor={anchorEl}
+                  closeAnchor={closeAnchor}
+                />
+              </>
+            )
           }
           title={user}
           subheader={moment(published_at).fromNow()}
@@ -290,32 +319,34 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
             ></div>
           </Typography>
         </CardContent>
-        <CardActions disableSpacing>
-          <IconButton
-            aria-label="add to favorites"
-            onClick={() => {
-              addVote();
-            }}
-          >
-            <img
-              src={voted ? "/upDone.svg" : "/up.svg"}
-              alt="asd"
-              className={classes.vote}
-            />
-          </IconButton>
-          <IconButton aria-label="share" onClick={copyFeedLink}>
-            <ShareIcon />
-            {animateCopy && <p className="copyAnimation">link copied</p>}
-          </IconButton>
+        {!home && (
+          <CardActions disableSpacing>
+            <IconButton
+              aria-label="add to favorites"
+              onClick={() => {
+                addVote();
+              }}
+            >
+              <img
+                src={voted ? "/upDone.svg" : "/up.svg"}
+                alt="asd"
+                className={classes.vote}
+              />
+            </IconButton>
+            <IconButton aria-label="share" onClick={copyFeedLink}>
+              <ShareIcon />
+              {animateCopy && <p className="copyAnimation">link copied</p>}
+            </IconButton>
 
-          <IconButton aria-label="bookmark" onClick={bookmark}>
-            <img
-              src={!bookmarked ? "/bookmark.svg" : "/bookmarked.svg"}
-              alt=""
-              className={classes.vote}
-            />
-          </IconButton>
-        </CardActions>
+            <IconButton aria-label="bookmark" onClick={bookmark}>
+              <img
+                src={!bookmarked ? "/bookmark.svg" : "/bookmarked.svg"}
+                alt=""
+                className={classes.vote}
+              />
+            </IconButton>
+          </CardActions>
+        )}
       </Card>
 
       <MyModal show={open} setShow={handleClose}>

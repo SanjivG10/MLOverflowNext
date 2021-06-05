@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Header from "../../components/Header";
 import PapersList from "../../components/PaperList";
-import FeedList from "../../components/FeedList";
 import { Container } from "@material-ui/core";
 import { useRouter } from "next/router";
+import { fetcher } from "../../hooks/requests";
+import { PAPER_URL } from "../../hooks/constants";
+import { GetServerSideProps } from "next";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -19,7 +21,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: "auto",
     marginRight: "auto",
   },
-  bookmarkContainer: {},
   nothing: {
     display: "flex",
     alignItems: "center",
@@ -27,28 +28,40 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface IProps {}
-
-const Profile = (props: IProps) => {
+const AuthorPage = ({ papers }) => {
   const classes = useStyles();
   const { query } = useRouter();
-  const { key } = query;
+  const { author } = query;
 
-  return key ? (
+  return author ? (
     <div className={classes.container}>
-      <Header title={`${key} results`} />
-      <div className={classes.bookmarkContainer}></div>
+      <Header title={author + " results"} />
       <Container>
-        <PapersList original />
-        <FeedList originalFeed />
+        <div>
+          <PapersList original data={papers} />
+        </div>
       </Container>
     </div>
   ) : (
     <div className={classes.nothing}>
-      <Header title="No tag found" />
-      <h3>No tag specified</h3>
+      <Header title="No results found" />
+      <h3>No author specified</h3>
     </div>
   );
 };
 
-export default Profile;
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  let papers = {};
+
+  const { author } = ctx.query;
+
+  const PAPER_SEARCH_URL = PAPER_URL + `?author=${author}`;
+
+  try {
+    papers = await fetcher(PAPER_SEARCH_URL);
+  } catch (error) {}
+
+  return { props: { papers } };
+};
+
+export default AuthorPage;

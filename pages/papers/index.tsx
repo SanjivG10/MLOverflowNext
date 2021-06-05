@@ -10,10 +10,13 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { PAPER_URL } from "../../hooks/constants";
-import { getAuthHeadersFromCookie } from "../../hooks/requests";
+import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { GetServerSideProps } from "next";
 import axios from "axios";
 import { IPaper } from "../../components/Paper";
+import { useRouter } from "next/router";
+import { Filter } from "../../components/Filter";
+import { getFilterURL, getNewQuery, isEmpty } from "../../helper";
 
 const useStyles = makeStyles((theme: Theme) => ({
   postList: {},
@@ -28,11 +31,96 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const PaperPage = ({ papers }) => {
   const classes = useStyles();
+  const router = useRouter();
 
   const [papersData, setPapersData] = useState(papers);
 
   const onPaperAddSuccess = (paper: IPaper) => {
     setPapersData({ ...papersData, results: [paper, ...papersData.results] });
+  };
+
+  const onClick = (filter?: string) => {
+    if (filter) {
+      const filterQuery = getFilterURL(filter);
+      const newQueries = getNewQuery(router.query, filterQuery);
+      let queries = "";
+      for (const query in newQueries) {
+        queries += "&" + query + "=" + newQueries[query];
+      }
+      router.push({ pathname: window.location.pathname, query: queries });
+      setFilter(queries, filter);
+    }
+  };
+
+  const codeOptions = [
+    {
+      name: "tensorflow",
+      icon: "/tensorflow.svg",
+      onClick: onClick,
+    },
+    {
+      name: "pytorch",
+      icon: "/pytorch.svg",
+      onClick: onClick,
+    },
+    {
+      name: "caffe",
+      icon: "/caffe.svg",
+      onClick: onClick,
+    },
+    {
+      name: "scikit-learn",
+      icon: "/scikit-learn.svg",
+      onClick: onClick,
+    },
+    {
+      name: "others",
+      icon: "/others.svg",
+      onClick: onClick,
+    },
+  ];
+
+  const timeOptions = [
+    {
+      name: "latest",
+      icon: "/latest.svg",
+      onClick: onClick,
+    },
+
+    {
+      name: "oldest",
+      icon: "/clock.svg",
+      onClick: onClick,
+    },
+  ];
+
+  const filters = [
+    {
+      icon: "/code.svg",
+      name: "CODE",
+      options: codeOptions,
+    },
+    {
+      icon: "/clock.svg",
+      name: "TIME",
+      options: timeOptions,
+    },
+  ];
+
+  const setFilter = (queries: string, filter?: string) => {
+    if (!filter) {
+      return;
+    }
+
+    const getFilterData = async () => {
+      const URL = PAPER_URL + "?" + queries;
+      const [data, error] = await useGet(URL);
+      if (!isEmpty(data)) {
+        setPapersData(data);
+      }
+    };
+
+    getFilterData();
   };
 
   return (
@@ -52,6 +140,8 @@ const PaperPage = ({ papers }) => {
             <PaperForm onSuccess={onPaperAddSuccess} />
           </AccordionDetails>
         </Accordion>
+
+        <Filter filters={filters} />
         <PaperList original data={papersData} />
       </Container>
     </div>
@@ -59,12 +149,20 @@ const PaperPage = ({ papers }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { data } = await axios.get(
-    PAPER_URL,
-    getAuthHeadersFromCookie(context)
-  );
+  const { order, language } = context.query;
+  let _data = {};
+  try {
+    const { data } = await axios.get(
+      PAPER_URL +
+        `?order=${order ? order : ""}&language=${language ? language : ""}`,
+      getAuthHeadersFromCookie(context)
+    );
+    _data = data;
+  } catch (error) {
+    console.log(error);
+  }
 
-  if (!data) {
+  if (isEmpty(_data)) {
     return {
       redirect: {
         destination: "/",
@@ -74,8 +172,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { papers: data },
+    props: { papers: _data },
   };
 };
-
 export default PaperPage;

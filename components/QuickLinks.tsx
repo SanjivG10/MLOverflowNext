@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { IQuickLink } from "./QuickLinkList";
@@ -14,6 +14,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 20,
     fontSize: 40,
     textAlign: "center",
+    "&:hover": {
+      cursor: "pointer",
+    },
   },
   img: {
     width: 200,
@@ -39,21 +42,38 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: "center",
     width: "100%",
   },
+  noQuickLink: {
+    textAlign: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
+    fontSize: 20,
+    fontStyle: "italic",
+  },
 }));
 
-const QuickLinks = ({ data }) => {
+const QuickLinks = ({ data, original }) => {
   const classes = useStyles();
 
-  const [quickLinks, setQuickLinks] = useState({
-    ...data,
-    results: [...data.results, ...data.results],
-  });
+  const [quickLinks, setQuickLinks] = useState(data);
+
+  useEffect(() => {
+    if (data) {
+      setQuickLinks(data);
+    }
+  }, [data]);
 
   return (
     <Grid className={classes.root}>
-      <h1 className={classes.mainLabel}>Quick Links</h1>
+      {!original && (
+        <Link href="/quicklinks">
+          <h1 className={classes.mainLabel}>Quick Links</h1>
+        </Link>
+      )}
       <Grid item>
         <Grid container className={classes.container}>
+          {quickLinks?.results?.length === 0 && (
+            <h3 className={classes.noQuickLink}>no quick links found</h3>
+          )}
           {quickLinks?.results?.map((item: IQuickLink) => (
             <Link href={"/quicklinks/" + item.slug} key={item.id}>
               <Tooltip title={item.name}>

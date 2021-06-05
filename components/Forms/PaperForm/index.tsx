@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import ValidationTextField from "./../ValidationTextField";
 import { ValidationFormAttrs } from "./constants";
@@ -19,6 +19,7 @@ import { PAPER_URL } from "../../../hooks/constants";
 import { isEmpty } from "../../../helper";
 import { IPaper } from "../../Paper";
 import Spinner from "../../Spinner";
+import { UserContext } from "../../../pages/_app";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,9 +74,10 @@ export default function PaperForm({
   const [tags, setTags] = useState<ITag[]>([]);
   const [posting, setPosting] = useState(false);
 
+  const { state, dispatch } = useContext(UserContext);
+
   useEffect(() => {
     if (data) {
-      console.log("callling");
       setTitle(data.title);
       setAuthors(data.authors);
       setAbstract(data.abstract);
@@ -213,6 +215,11 @@ export default function PaperForm({
   };
 
   const publishPaper = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
+
     setPosting(true);
     setError("");
     if ((code && !codeType) || (!code && codeType) || codeType === "None") {
@@ -220,6 +227,7 @@ export default function PaperForm({
       setCodeType("");
     }
     const isValidated = validate();
+
     if (isValidated) {
       if (data && data.id) {
         editPaper();

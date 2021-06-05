@@ -89,7 +89,7 @@ export default function PapersList({
         className={classes.root}
       >
         {papers?.results?.length === 0 && (
-          <h3 className={classes.noPaper}>No Paper found</h3>
+          <h3 className={classes.noPaper}>no paper found</h3>
         )}
         {papers?.results?.map((item: IPaper) => {
           return (
@@ -103,7 +103,7 @@ export default function PapersList({
         })}
       </List>
 
-      {!original && (
+      {!original && papers?.results?.length > 0 && (
         <Link href="/papers">
           <div className={classes.moreButton}>
             <Button color="secondary" className={classes.seeMore}>

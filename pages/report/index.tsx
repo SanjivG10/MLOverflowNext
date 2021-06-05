@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Header from "../../components/Header";
 import { Button, Container } from "@material-ui/core";
+import { usePost } from "../../hooks/requests";
+import { UserContext } from "../_app";
+import { REPORT_URL } from "../../hooks/constants";
+import { isEmpty } from "../../helper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,8 +50,34 @@ const useStyles = makeStyles((theme: Theme) =>
 interface IProps {}
 
 const ReportPage = (props: IProps) => {
+  const { state, dispatch } = useContext(UserContext);
+  const [text, setText] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const reportABug = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
+
+    const [report] = await usePost(REPORT_URL, {
+      text,
+    });
+
+    if (!isEmpty(report)) {
+      setSuccess(true);
+    }
+  };
+
   const classes = useStyles();
-  return (
+  return success ? (
+    <Container className={classes.main}>
+      <Header title="THANK YOU" />
+      <div className={classes.alert}>
+        <div>Thank you for your report.</div>
+      </div>
+    </Container>
+  ) : (
     <Container className={classes.main}>
       <Header title="Report a problem" />
       <div className={classes.alert}>
@@ -66,8 +96,17 @@ const ReportPage = (props: IProps) => {
         aria-label="minimum height"
         className={classes.suggestionBox}
         placeholder="Start typing ... "
+        value={text}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+          setText(e.target.value);
+        }}
       />
-      <Button color="primary" variant="outlined" className={classes.post}>
+      <Button
+        color="primary"
+        variant="outlined"
+        className={classes.post}
+        onClick={reportABug}
+      >
         POST
       </Button>
     </Container>

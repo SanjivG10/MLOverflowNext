@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import { COMMENT_URL, COMMENT_URL_PAPER } from "../hooks/constants";
 import { useDelete, usePatch } from "../hooks/requests";
 import MyModal from "./Modal";
 import CommentForm from "./Forms/CommentForm";
 import Delete from "./Delete";
+import { UserContext } from "../pages/_app";
 
 const useStyles = makeStyles((theme: Theme) => ({
   eachCommentContainer: {
@@ -109,7 +110,13 @@ const Comment = (props: IComment) => {
   const [mode, setMode] = useState<string>("edit");
   const [deleted, setDeleted] = useState<boolean>(false);
 
+  const { state, dispatch } = useContext(UserContext);
+
   const addVote = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     const COMMENT_PATCH_URL =
       (paper ? COMMENT_URL_PAPER : COMMENT_URL) + id + "/";
     const [comment, error] = await usePatch(COMMENT_PATCH_URL, {
@@ -122,6 +129,10 @@ const Comment = (props: IComment) => {
   };
 
   const bookmark = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     const COMMENT_PATCH_URL =
       (paper ? COMMENT_URL_PAPER : COMMENT_URL) + id + "/";
     const [comment, error] = await usePatch(COMMENT_PATCH_URL, {
@@ -138,6 +149,10 @@ const Comment = (props: IComment) => {
   };
 
   const deleteComment = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     const URL = paper ? COMMENT_URL_PAPER + `${id}/` : COMMENT_URL + `${id}/`;
     const [delComment, error] = await useDelete(URL);
     if (!error) {
@@ -174,6 +189,10 @@ const Comment = (props: IComment) => {
               <span
                 className={classes.edit}
                 onClick={() => {
+                  if (!state.loginStatus) {
+                    dispatch({ type: "toggleModal", show: true });
+                    return;
+                  }
                   setMode("edit");
                   setShow(true);
                 }}
@@ -183,6 +202,10 @@ const Comment = (props: IComment) => {
               <span
                 className={classes.delete}
                 onClick={() => {
+                  if (!state.loginStatus) {
+                    dispatch({ type: "toggleModal", show: true });
+                    return;
+                  }
                   setMode("delete");
                   setShow(true);
                 }}

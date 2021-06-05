@@ -9,7 +9,7 @@ export const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).the
 export const getAuthHeaders = () => {
     return {
         headers: {
-            Authorization: `Token ${localStorage.getItem(USER_TOKEN_LOCAL_STORAGE) || "5fd616f63ede09db24c70ed02615ba23206ff20c"}`
+            Authorization: `Token ${localStorage.getItem(USER_TOKEN_LOCAL_STORAGE)}`
         }
     }
 }
@@ -50,8 +50,6 @@ export const getAuthHeadersFromCookie = (ctx: GetServerSidePropsContext) => {
         const parsedCookies = cookierParser.parse(cookie);
         token = parsedCookies[USER_TOKEN_LOCAL_STORAGE]
     }
-
-    token = "5fd616f63ede09db24c70ed02615ba23206ff20c";
 
     if (!token) {
         return {}
@@ -150,12 +148,12 @@ export const useDelete = async (url: string) => {
 }
 
 
-export const usePost = async (url: string, val: any) => {
+export const usePost = async (url: string, val: any, useAuth = true) => {
     let _data: AxiosResponse<any> | {} = {};
     let error = "";
     let code: number;
     try {
-        const { data } = await axios.post(url, val, getAuthHeaders());
+        const { data } = await axios.post(url, val, useAuth ? getAuthHeaders() : {});
         _data = data;
     }
     catch (err) {

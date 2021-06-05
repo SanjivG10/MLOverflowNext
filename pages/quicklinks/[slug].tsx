@@ -38,7 +38,7 @@ const QuickLinkPage: React.FC = ({ _data }) => {
 
   return (
     <div className={classes.main}>
-      <Header title="FEED _ HAI" />
+      <Header title={data.name} />
       <Grid container spacing={3} className={classes.container}>
         <Grid item sm={6}>
           <div className={classes.feed}>

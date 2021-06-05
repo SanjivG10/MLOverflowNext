@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import draftToHtml from "draftjs-to-html";
 import { makeStyles, Theme } from "@material-ui/core/styles";
@@ -20,6 +20,7 @@ import {
   UPLOAD_IMAGE_URL,
 } from "../../../hooks/constants";
 import Spinner from "../../Spinner";
+import { UserContext } from "../../../pages/_app";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {},
@@ -60,6 +61,8 @@ const CommentForm = ({
   const [posting, setPosting] = useState(false);
   const classes = useStyles();
 
+  const { state, dispatch } = useContext(UserContext);
+
   useEffect(() => {
     if (data && data.id) {
       const html = data.text;
@@ -74,24 +77,29 @@ const CommentForm = ({
 
   function uploadCallback(file: File) {
     return new Promise(async (resolve, reject) => {
-      const upload = async (file) => {
-        let formData = new FormData();
-        formData.append("image", file);
+      if (!state.loginStatus) {
+        dispatch({ type: "toggleModal", show: true });
+        reject("error");
+      } else {
+        const upload = async (file: File) => {
+          let formData = new FormData();
+          formData.append("image", file);
 
-        const [imageData, error] = await usePostForImage(
-          UPLOAD_IMAGE_URL,
-          formData,
-          {
-            "content-type": "multipart/form-data",
+          const [imageData, error] = await usePostForImage(
+            UPLOAD_IMAGE_URL,
+            formData,
+            {
+              "content-type": "multipart/form-data",
+            }
+          );
+
+          if (!error) {
+            resolve({ data: { link: HOME_URL_WITHOUT_SLASH + imageData.src } });
           }
-        );
+        };
 
-        if (!error) {
-          resolve({ data: { link: HOME_URL_WITHOUT_SLASH + imageData.src } });
-        }
-      };
-
-      await upload(file);
+        await upload(file);
+      }
     });
   }
 
@@ -100,6 +108,10 @@ const CommentForm = ({
   };
 
   const addComment = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     setPosting(true);
     const rawState = convertToRaw(editorState.getCurrentContent());
     const text = draftToHtml(rawState);
@@ -108,7 +120,6 @@ const CommentForm = ({
         ? COMMENT_URL_PAPER + `${data.id}/`
         : COMMENT_URL + `${data.id}/`;
       const [newComment, error] = await usePut(URL, { text });
-      console.log(error, " is the error");
       if (!error) {
         onSuccess(newComment);
       }

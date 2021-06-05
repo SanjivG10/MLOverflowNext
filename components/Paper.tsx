@@ -75,20 +75,20 @@ const Paper = (props: IPaper) => {
     <div className={classes.root}>
       <div className={classes.title}>
         <div className={classes.eachRow}>
-          <img alt="" className={classes.icon} src="title.svg" />
+          <img alt="" className={classes.icon} src="/title.svg" />
           <div className={`${classes.title} ${classes.value}`}>
             {title && title.toUpperCase()}
           </div>
         </div>
       </div>
       <div className={classes.eachRow}>
-        <img alt="" className={classes.icon} src="abstract.svg" />
+        <img alt="" className={classes.icon} src="/abstract.svg" />
         <div className={`${classes.abstract} ${classes.value}`}>
           {textLimit(abstract, 200)}
         </div>
       </div>
       <div className={classes.eachRow}>
-        <img alt="" className={classes.icon} src="link.svg" />
+        <img alt="" className={classes.icon} src="/link.svg" />
         <a
           href={link}
           target="_blank"
@@ -101,7 +101,7 @@ const Paper = (props: IPaper) => {
 
       {codes && codes.length > 0 && codes[0].link && codes[0].language && (
         <div className={classes.eachRow}>
-          <img alt="" className={classes.icon} src="code.svg" />
+          <img alt="" className={classes.icon} src="/code.svg" />
           <a
             href={link}
             target="_blank"
@@ -114,7 +114,7 @@ const Paper = (props: IPaper) => {
             <img
               alt=""
               className={classes.langIcon}
-              src={`${codes[0].language}.svg`}
+              src={`/${codes[0].language}.svg`}
             />
           )}
         </div>

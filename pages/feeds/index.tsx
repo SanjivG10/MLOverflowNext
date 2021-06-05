@@ -12,6 +12,7 @@ import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { useCookies } from "react-cookie";
 import { GetServerSideProps } from "next";
 import { IFeed } from "../../components/Feed";
+import { getFilterURL, getNewQuery, isEmpty } from "../../helper";
 
 const useStyles = makeStyles((theme) => ({
   postList: {
@@ -47,13 +48,25 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
     setData(newData);
   };
 
+  const onClick = (filter?: string) => {
+    if (filter) {
+      const filterQuery = getFilterURL(filter);
+      const newQueries = getNewQuery(router.query, filterQuery);
+      let queries = "";
+
+      for (const query in newQueries) {
+        queries += "&" + query + "=" + newQueries[query];
+      }
+      router.push({ pathname: window.location.pathname, query: queries });
+      setFilter(queries, filter);
+    }
+  };
+
   const voteFilterOptions = [
     {
       name: "vote up",
       icon: "/up.svg",
-      onClick: (filter?: string) => {
-        setFilter(filter);
-      },
+      onClick: onClick,
     },
   ];
 
@@ -61,9 +74,7 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
     {
       name: "bookmarked",
       icon: "/bookmark.svg",
-      onClick: (filter?: string) => {
-        setFilter(filter);
-      },
+      onClick: onClick,
     },
   ];
 
@@ -80,27 +91,20 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
     },
   ];
 
-  const setFilter = (filter?: string) => {
-    const { vote, bookmark } = router.query;
-
-    let queryString = vote ? "&vote=true" : "";
-    queryString += bookmark ? "&bookmark=true" : "";
-    const { pathname } = window.location;
-    if (!vote && filter === "vote up") {
-      queryString += "&vote=true";
-    }
-    if (!bookmark && filter === "bookmarked") {
-      queryString += "&bookmark=true";
+  const setFilter = (queries: string, filter?: string) => {
+    if (!filter) {
+      return;
     }
 
     const getFilterData = async () => {
-      const URL = FEED_URL + "?" + queryString;
-      const [data, error] = await useGet(URL);
-      setData(data);
+      const URL = FEED_URL + "?" + queries;
+      const [data] = await useGet(URL);
+      if (!isEmpty(data)) {
+        setData(data);
+      }
     };
-    getFilterData();
 
-    router.push({ pathname: pathname, query: queryString });
+    getFilterData();
   };
 
   return (
@@ -118,9 +122,18 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { data } = await axios.get(FEED_URL, getAuthHeadersFromCookie(context));
+  let _data = {};
+  try {
+    const { vote, bookmark } = context.query;
+    const { data } = await axios.get(
+      FEED_URL +
+        `?vote=${vote ? vote : ""}&bookmark=${bookmark ? bookmark : ""}`,
+      getAuthHeadersFromCookie(context)
+    );
+    _data = data;
+  } catch (error) {}
 
-  if (!data) {
+  if (isEmpty(_data)) {
     return {
       redirect: {
         destination: "/",
@@ -130,7 +143,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { feeds: data },
+    props: { feeds: _data },
   };
 };
 

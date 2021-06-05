@@ -2,12 +2,14 @@ export const HOME_URL_FOR_COPY = process.env.NEXT_PUBLIC_MODE === "debug" ? "htt
 export const HOME_URL_WITHOUT_SLASH = process.env.NEXT_PUBLIC_MODE === "debug" ? "http://localhost:8000" : "https://mloverflow.com"
 export const HOME_URL = HOME_URL_WITHOUT_SLASH + "/"
 export const URL = HOME_URL + "api/v1/";
+export const LOGIN_URL = URL + "auth/google/"
 export const UPLOAD_IMAGE_URL = URL + "upload/"
 export const FEED_URL = URL + "feeds/";
 export const COPY_URL = HOME_URL_FOR_COPY;
 export const COPY_FEED_URL = HOME_URL_FOR_COPY + "feeds/"
 export const PAPER_URL = URL + "papers/";
 export const QUOTE_URL = URL + "quote/";
+export const REPORT_URL = URL + "report/"
 export const QUICKLINK_URL = URL + "quicklinks/";
 export const COMMENT_URL = URL + "feed-comments/"
 export const COMMENT_URL_PAPER = URL + "paper-comments/";

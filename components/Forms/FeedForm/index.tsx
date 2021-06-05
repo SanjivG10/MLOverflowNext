@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   EditorState,
@@ -27,6 +27,7 @@ import {
 } from "./constants";
 import Spinner from "../../Spinner";
 import { IFeed } from "../../Feed";
+import { UserContext } from "./../../../pages/_app";
 
 interface IProps {
   successSubmit: (obj: any) => void;
@@ -87,6 +88,8 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
     setEditorState(newEditorState);
   };
 
+  const { state, dispatch } = useContext(UserContext);
+
   useEffect(() => {
     if (data && data.id) {
       if (data.tags) {
@@ -108,29 +111,36 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
 
   function uploadCallback(file: File) {
     return new Promise(async (resolve, reject) => {
-      const upload = async (file) => {
-        let formData = new FormData();
-        formData.append("image", file);
+      if (!state.loginStatus) {
+        dispatch({ type: "toggleModal", show: true });
+        reject("error");
+      } else {
+        const upload = async (file) => {
+          let formData = new FormData();
+          formData.append("image", file);
 
-        const [imageData, error] = await usePostForImage(
-          UPLOAD_IMAGE_URL,
-          formData,
-          {
-            "content-type": "multipart/form-data",
+          const [imageData, error] = await usePostForImage(
+            UPLOAD_IMAGE_URL,
+            formData,
+            {
+              "content-type": "multipart/form-data",
+            }
+          );
+
+          if (!error) {
+            resolve({ data: { link: HOME_URL_WITHOUT_SLASH + imageData.src } });
+          } else {
+            reject("error");
           }
-        );
+        };
 
-        if (!error) {
-          resolve({ data: { link: HOME_URL_WITHOUT_SLASH + imageData.src } });
-        }
-      };
-
-      await upload(file);
+        await upload(file);
+      }
     });
   }
 
   const editFeed = async (text: string) => {
-    const [feed, [myerr]] = await usePut(FEED_URL + `${data.id}/`, {
+    const [feed, myerr] = await usePut(FEED_URL + `${data.id}/`, {
       text,
       slug,
       tags,
@@ -143,7 +153,7 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
   };
 
   const postFeed = async (text: string) => {
-    const [feed, [myerr]] = await usePost(FEED_URL, { text, slug, tags });
+    const [feed, myerr] = await usePost(FEED_URL, { text, slug, tags });
     if (feed.id) {
       successSubmit(feed);
       setTags([]);
@@ -157,6 +167,10 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
   };
 
   const submitFeed = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     setPosting(true);
     const rawState = convertToRaw(editorState.getCurrentContent());
     const text = draftToHtml(rawState);

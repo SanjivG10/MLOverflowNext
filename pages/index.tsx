@@ -1,4 +1,4 @@
-import React, { useReducer, createContext } from "react";
+import React from "react";
 import Header from "../components/Header";
 import { makeStyles } from "@material-ui/core/styles";
 import { Container } from "@material-ui/core";
@@ -7,9 +7,6 @@ import QuickLinks from "../components/QuickLinks";
 import PaperList from "../components/PaperList";
 import FeedsList from "../components/FeedList";
 import { SLOGAN } from "../constants";
-import { userReducer } from "../reducers/userReducer";
-import Modal from "../components/Modal";
-import Button from "@material-ui/core/Button";
 import { fetcher } from "./../hooks/requests";
 import {
   PAPER_URL_HOME,
@@ -33,48 +30,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type UserStateType = {
-  show: boolean;
-  loginStatus: boolean;
-};
-
-const initialUserState = {
-  show: false,
-  loginStatus: false,
-};
-
-export const UserContext = createContext<{
-  state: UserStateType;
-  dispatch: React.Dispatch<any>;
-}>({ state: initialUserState, dispatch: () => null });
-
 const Index = ({ feeds, papers, quote, tags, quickLinks }) => {
   const classes = useStyles();
 
-  const [state, dispatch] = useReducer(userReducer, initialUserState);
-
-  const toggleModal = (show: boolean) =>
-    dispatch({ type: "toggleModal", payload: show });
-
   return (
-    <UserContext.Provider value={{ state, dispatch }}>
-      <Modal show={state.show} setShow={toggleModal}>
-        <div className={classes.label}>You are not logged in</div>
-      </Modal>
+    <div className={classes.homePageContainer}>
+      <Header title={SLOGAN} />
 
-      <Button onClick={() => toggleModal(true)}>CLICK</Button>
-
-      <div className={classes.homePageContainer}>
-        <Header title={SLOGAN} />
-
-        <Container>
-          <Jumbotron quote={quote} tags={tags} />
-          <FeedsList data={feeds} />
-          <PaperList data={papers} />
-          <QuickLinks data={quickLinks} />
-        </Container>
-      </div>
-    </UserContext.Provider>
+      <Container>
+        <Jumbotron quote={quote} tags={tags} />
+        <FeedsList home data={feeds} />
+        <PaperList data={papers} />
+        <QuickLinks original={false} data={quickLinks} />
+      </Container>
+    </div>
   );
 };
 

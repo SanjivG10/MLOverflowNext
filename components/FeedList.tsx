@@ -13,6 +13,7 @@ import { isEmpty } from "../helper";
 type FeedProps = {
   originalFeed?: boolean;
   data: IFeedsList;
+  home: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -55,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function FeedList({ originalFeed, data }: FeedProps) {
+export default function FeedList({ originalFeed, data, home }: FeedProps) {
   const classes = useStyles();
 
   const [feedsData, setFeedsData] = useState(data);
@@ -85,9 +86,8 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
   };
 
   const fetchMoreData = async () => {
-    if (feedsData.links.next) {
+    if (feedsData?.links?.next) {
       const [data, error] = await useGet(feedsData.links.next);
-      console.log([...feedsData.results, data.results]);
       if (!isEmpty(data)) {
         setFeedsData({
           ...data,
@@ -105,21 +105,22 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
         </Link>
       )}
       <InfiniteScroll
-        dataLength={feedsData.results?.length || 0}
+        dataLength={feedsData?.results?.length || 0}
         next={fetchMoreData}
-        hasMore={Boolean(feedsData.links?.next) || false}
+        hasMore={Boolean(feedsData?.links?.next) || false}
         loader={<Spinner />}
       >
         {" "}
         <Grid container className={classes.root}>
-          {feedsData.results?.length === 0 && (
-            <div className={classes.noFeedLabel}>No posts found</div>
+          {feedsData?.results?.length === 0 && (
+            <div className={classes.noFeedLabel}>no posts found</div>
           )}
-          {feedsData.results?.map((item: IFeed) => {
+          {feedsData?.results?.map((item: IFeed) => {
             return (
               <Grid item xs={12} sm={12} md={6} lg={6} xl={4} key={item.id}>
                 <div className={classes.feed} key={item.id}>
                   <Feed
+                    home={home}
                     editSuccess={editSuccess}
                     {...item}
                     key={item.id}
@@ -132,7 +133,7 @@ export default function FeedList({ originalFeed, data }: FeedProps) {
         </Grid>
       </InfiniteScroll>
 
-      {!originalFeed && (
+      {!originalFeed && feedsData?.results?.length > 0 && (
         <Link href="/feeds">
           <div className={classes.moreButton}>
             <Button color="secondary" className={classes.seeMore}>

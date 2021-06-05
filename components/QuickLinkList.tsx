@@ -13,6 +13,8 @@ export interface IQuickLink {
   id: number;
   slug: string;
   onEditSuccess?: () => void;
+  fromList?: boolean;
+  isOwner: boolean;
 }
 
 export interface IQuickLinkProps {
@@ -64,7 +66,7 @@ const QuickLinkList = ({ quickLinks }: IQuickLinkProps) => {
     >
       <>
         {quickLinksData?.results?.map((quickLink) => {
-          return <QuickLink {...quickLink} key={quickLink.id} />;
+          return <QuickLink {...quickLink} key={quickLink.id} fromList />;
         })}
       </>
     </InfiniteScroll>

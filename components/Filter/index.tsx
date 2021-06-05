@@ -69,7 +69,7 @@ export const Filter = (props: IProps) => {
     <div className={classes.container}>
       {filters.map((filter, index) => {
         return (
-          <div className={classes.eachFilter} key={filter.name}>
+          <div className={classes.eachFilter} key={index}>
             <Button
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 setAnchor(event, filter.name);

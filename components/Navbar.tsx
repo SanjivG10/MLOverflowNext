@@ -6,11 +6,15 @@ import Typography from "@material-ui/core/Typography";
 import Link from "next/link";
 import GoogleLogin, { GoogleLoginResponse } from "react-google-login";
 import { useRouter } from "next/router";
-import { UserContext } from "./../pages";
+import { UserContext } from "./../pages/_app";
 import {
   USER_IMAGE_LOCAL_STORAGE,
   USER_TOKEN_LOCAL_STORAGE,
 } from "../constants";
+import { usePost } from "../hooks/requests";
+import { LOGIN_URL } from "../hooks/constants";
+import { isEmpty } from "../helper";
+import Cookies from "universal-cookie";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,8 +72,8 @@ const useStyles = makeStyles((theme) => ({
   },
   userImage: {
     borderRadius: "50%",
-    height: 36,
-    width: 36,
+    width: 40,
+    height: 40,
   },
 }));
 
@@ -79,27 +83,51 @@ export default function Navbar() {
   const [search, setSearch] = useState("");
 
   const { state, dispatch } = useContext(UserContext);
+  const [img, setImg] = useState("");
+  const cookies = new Cookies();
 
   useEffect(() => {
-    const token = localStorage.getItem(USER_TOKEN_LOCAL_STORAGE);
-    const img = localStorage.getItem(USER_IMAGE_LOCAL_STORAGE);
-    if (token && img) {
-      dispatch({ type: "loggedIn", payload: { token, img } });
+    const token_local = localStorage.getItem(USER_TOKEN_LOCAL_STORAGE);
+    const token_cookie = cookies.get(USER_TOKEN_LOCAL_STORAGE);
+    const avatar = localStorage.getItem(USER_IMAGE_LOCAL_STORAGE);
+
+    if (token_local && avatar && token_cookie) {
+      dispatch({
+        type: "loggedIn",
+        payload: { token: token_local, img: avatar },
+      });
+      setImg(avatar);
     } else {
       dispatch({ type: "loggedOut" });
+      cookies.remove(USER_TOKEN_LOCAL_STORAGE);
     }
   }, [state.loginStatus]);
 
   const responseGoogle = async (response: GoogleLoginResponse) => {
     const { accessToken, profileObj } = response;
 
-    const login = "auth/google/";
-    let img;
+    let user_img = "";
 
-    img = profileObj.imageUrl;
+    user_img = profileObj.imageUrl;
 
-    if (!img) {
-      img = "/user.svg";
+    if (!user_img) {
+      user_img = "/user.svg";
+    }
+
+    const [data, error] = await usePost(
+      LOGIN_URL,
+      {
+        access_token: accessToken,
+      },
+      false
+    );
+
+    if (!isEmpty(data)) {
+      dispatch({
+        type: "loggedIn",
+        payload: { token: data.key, img: user_img },
+      });
+      cookies.set(USER_TOKEN_LOCAL_STORAGE, data.key);
     }
   };
 
@@ -146,11 +174,12 @@ export default function Navbar() {
           {state.loginStatus ? (
             <>
               <img
-                src={
-                  localStorage.getItem(USER_IMAGE_LOCAL_STORAGE) || "/user.svg"
-                }
+                src={img}
                 alt=""
                 className={classes.userImage}
+                onClick={() => {
+                  router.push("/profile");
+                }}
               />
             </>
           ) : (

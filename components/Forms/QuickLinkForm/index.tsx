@@ -69,25 +69,67 @@ const QuickLinkForm = ({ successSubmit, data }: IProps) => {
   const [posting, setPosting] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const [desc, setDesc] = useState<string>("");
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<File | null | string>(null);
   const [link, setLink] = useState<string>("");
+
+  const [uploaded, setUploaded] = useState<string>("");
 
   useEffect(() => {
     if (data && data.id) {
+      setName(data.name);
+      setDesc(data.description);
+      setLink(data.link);
       setSlug(data.slug);
       setSlugError(false);
+      setUploaded(data.image);
     }
   }, [data]);
 
   const editQuickLink = async () => {
-    const [quickLink, [myerr]] = await usePut(QUICKLINK_URL + `${data.id}/`, {
-      slug,
-    });
-    if (quickLink.id) {
-      successSubmit(quickLink);
-    } else {
-      setError(myerr);
+    setError("");
+    setPosting(true);
+
+    if (!image) {
+      return;
     }
+
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const [imageData, error] = await usePostForImage(
+      UPLOAD_IMAGE_URL,
+      formData,
+      {
+        "content-type": "multipart/form-data",
+      }
+    );
+
+    if (!isEmpty(imageData)) {
+      const image_link = HOME_URL_WITHOUT_SLASH + imageData.src;
+
+      const [quickLink, myerr] = await usePut(QUICKLINK_URL + `${data.id}/`, {
+        slug,
+        name,
+        description: desc,
+        image: image_link,
+        link,
+      });
+
+      if (!isEmpty(quickLink)) {
+        successSubmit(quickLink);
+        setName("");
+        setDesc("");
+        setImage(null);
+        setLink("");
+        setSlug("");
+        setError("");
+        setSlugError(false);
+      } else {
+        setError(myerr);
+      }
+    }
+
+    setPosting(false);
   };
 
   const postQuickLink = async () => {
@@ -226,6 +268,8 @@ const QuickLinkForm = ({ successSubmit, data }: IProps) => {
           />
         )}
 
+        {uploaded && !image && <img src={uploaded} className={classes.image} />}
+
         <SlugField
           placeholder={ValidationFormAttrs.slug.placeholder}
           data={slug}
@@ -243,7 +287,7 @@ const QuickLinkForm = ({ successSubmit, data }: IProps) => {
           <Button
             className={classes.postButton}
             color="primary"
-            disabled={!image || !link || !name || !desc || !slug}
+            disabled={!(image || uploaded) || !link || !name || !desc || !slug}
             onClick={submitQuickLink}
           >
             {data && data.id ? "Edit" : "POST"}

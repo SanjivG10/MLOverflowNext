@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Header from "../../components/Header";
 import Paper from "@material-ui/core/Paper";
-import { DUMMY_RESOURCES } from "../../dummy";
 import { ClassNameMap } from "@material-ui/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
@@ -13,6 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import PaperResources from "../../components/PaperResources";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Link from "next/link";
 import {
   COMMENT_URL_PAPER,
   PAPER_URL,
@@ -33,6 +33,7 @@ import { IPaper } from "../../components/Paper";
 import { isEmpty } from "../../helper";
 import CommentList from "../../components/CommentList";
 import { IComment } from "../../components/Comment";
+import { UserContext } from "../_app";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -173,10 +174,14 @@ const PaperPage: React.FC = ({ _data, _resources, _comments }) => {
   const [resourceType, setResourceType] = useState<string>("");
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState("edit");
+  const [posting, isPosting] = useState(false);
+  const [error, setError] = useState("");
 
   const [data, setData] = useState(_data);
   const [allResources, setAllResources] = useState(_resources);
   const [paperComments, setPaperComments] = useState(_comments);
+
+  const { state, dispatch } = useContext(UserContext);
 
   const onDeleteSuccess = async () => {
     setShow(false);
@@ -193,16 +198,29 @@ const PaperPage: React.FC = ({ _data, _resources, _comments }) => {
   };
 
   const editPaper = () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     setMode("edit");
     setShow(true);
   };
 
   const deletePaper = () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
     setMode("delete");
     setShow(true);
   };
 
   const addResource = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
+    isPosting(true);
     const [newResource, error] = await usePost(
       RESOURCE_URL + `?paper=${data.id}`,
       {
@@ -220,6 +238,7 @@ const PaperPage: React.FC = ({ _data, _resources, _comments }) => {
         results: [newResource, ...allResources.results],
       });
     }
+    isPosting(false);
   };
 
   const onCommentSuccess = (comment: IComment) => {
@@ -238,9 +257,9 @@ const PaperPage: React.FC = ({ _data, _resources, _comments }) => {
         <div className={classes.authors}>
           {data.authors.map((author: { name: string }) => {
             return (
-              <span key={author.name} className={classes.eachAuthor}>
-                {author.name}
-              </span>
+              <Link href={`/authors/${author.name}`} key={author.name}>
+                <span className={classes.eachAuthor}>{author.name}</span>
+              </Link>
             );
           })}
         </div>

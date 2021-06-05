@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import MyModal from "./Modal";
@@ -8,11 +8,14 @@ import { RESOURCE_URL } from "../hooks/constants";
 import { isEmpty } from "../helper";
 import Spinner from "./Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { UserContext } from "../pages/_app";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
+    maxHeight: 200,
+    overflow: "auto",
   },
   url: {
     textDecoration: "none",
@@ -71,6 +74,8 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
 
   const [idToDelete, setId] = useState<number | null>(null);
 
+  const { state, dispatch } = useContext(UserContext);
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -111,7 +116,7 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
   };
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} id="scrollableDiv">
       <h3>Resources</h3>
 
       <InfiniteScroll
@@ -119,6 +124,7 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
         next={fetchMoreResources}
         hasMore={Boolean(resources.links.next) || false}
         loader={<Spinner />}
+        scrollableTarget="scrollableDiv"
       >
         <>
           {resources?.results?.map((resource: Resource) => {
@@ -143,7 +149,13 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
                   <Button
                     color="secondary"
                     className={classes.delete}
-                    onClick={() => openModal(resource.id)}
+                    onClick={() => {
+                      if (!state.loginStatus) {
+                        dispatch({ type: "toggleModal", show: true });
+                        return;
+                      }
+                      openModal(resource.id);
+                    }}
                   >
                     DELETE
                   </Button>

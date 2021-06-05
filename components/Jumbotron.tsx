@@ -110,7 +110,7 @@ const Jumbotron = ({
               className={classes.tag}
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
-                router.push("/tag?key=" + tag.name);
+                router.push("/search?key=" + tag.name);
               }}
             >
               {tag.name}
