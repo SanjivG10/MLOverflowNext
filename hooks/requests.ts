@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios'
+import axios, { AxiosError } from 'axios'
 import { GetServerSidePropsContext } from 'next'
 import { USER_TOKEN_LOCAL_STORAGE } from '../constants'
 import * as cookierParser from "cookie"
@@ -7,9 +7,10 @@ export const fetcher = (...args: Parameters<typeof fetch>) => fetch(...args).the
 
 // using dummy for now! 
 export const getAuthHeaders = () => {
+    const token = localStorage.getItem(USER_TOKEN_LOCAL_STORAGE);
     return {
         headers: {
-            Authorization: `Token ${localStorage.getItem(USER_TOKEN_LOCAL_STORAGE)}`
+            Authorization: token ? `Token ${localStorage.getItem(USER_TOKEN_LOCAL_STORAGE)}` : ""
         }
     }
 }
@@ -57,7 +58,7 @@ export const getAuthHeadersFromCookie = (ctx: GetServerSidePropsContext) => {
 
     return {
         headers: {
-            Authorization: `Token ${token || ""}`
+            Authorization: `Token ${token}`
         }
     }
 }

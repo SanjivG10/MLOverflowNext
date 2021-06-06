@@ -50,7 +50,7 @@ const Index = ({
     title: SLOGAN,
     description: SLOGAN_DESC,
     ogTitle: SLOGAN,
-    image: "/logo_white.png",
+    image: "/home_page.JPG",
     url: HOME_URL,
   };
 

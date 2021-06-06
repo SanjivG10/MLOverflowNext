@@ -3,11 +3,10 @@ import React from "react";
 import dynamic from "next/dynamic";
 const Editor = dynamic(
   () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
-  { ssr: false, loading: <Spinner /> }
+  { ssr: false }
 );
 import { colors, emojis } from "./constants";
 import { EditorState } from "react-draft-wysiwyg";
-import Spinner from "../../Spinner";
 
 interface IProps {
   editorState: EditorState;
