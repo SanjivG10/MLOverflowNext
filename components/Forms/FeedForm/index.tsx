@@ -115,7 +115,7 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
         dispatch({ type: "toggleModal", show: true });
         reject("error");
       } else {
-        const upload = async (file) => {
+        const upload = async (file: File) => {
           let formData = new FormData();
           formData.append("image", file);
 
@@ -140,15 +140,17 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
   }
 
   const editFeed = async (text: string) => {
-    const [feed, myerr] = await usePut(FEED_URL + `${data.id}/`, {
-      text,
-      slug,
-      tags,
-    });
-    if (feed.id) {
-      successSubmit(feed);
-    } else {
-      setError(myerr);
+    if (data && data.id) {
+      const [feed, myerr] = await usePut(FEED_URL + `${data.id}/`, {
+        text,
+        slug,
+        tags,
+      });
+      if (feed.id) {
+        successSubmit(feed);
+      } else {
+        setError(myerr);
+      }
     }
   };
 

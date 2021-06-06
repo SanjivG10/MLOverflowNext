@@ -1,6 +1,6 @@
 import { ParsedUrlQuery } from "querystring";
 
-function commonKeys(a, b) {
+function commonKeys(a: any, b: any) {
     return Object.keys(a).filter(function (key) {
         return b.hasOwnProperty(key);
     });

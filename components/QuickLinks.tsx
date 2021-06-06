@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const QuickLinks = ({ data, original }) => {
+const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
   const classes = useStyles();
 
   const [quickLinks, setQuickLinks] = useState(data);

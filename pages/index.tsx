@@ -31,7 +31,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Index = ({ feeds, papers, quote, tags, quickLinks }) => {
+const Index = ({
+  feeds,
+  papers,
+  quote,
+  tags,
+  quickLinks,
+}: {
+  feeds: any;
+  papers: any;
+  quote: any;
+  tags: any;
+  quickLinks: any;
+}) => {
   const classes = useStyles();
 
   const oGprops = {
@@ -57,11 +69,11 @@ const Index = ({ feeds, papers, quote, tags, quickLinks }) => {
 };
 
 export async function getStaticProps() {
-  let papers = {};
+  let papers: any = {};
   let quote = "";
-  let feeds = {};
-  let quickLinks = {};
-  let tags = [];
+  let feeds: any = {};
+  let quickLinks: any = {};
+  let tags: any = [];
   try {
     quote = await fetcher(QUOTE_URL).then((quoteResponse) => {
       return quoteResponse.quote;

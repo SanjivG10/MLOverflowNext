@@ -169,7 +169,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   commentList: {},
 }));
 
-const PaperPage: React.FC = ({ _data, _resources, _comments }) => {
+const PaperPage: React.FC<{ _data: any; _resources: any; _comments: any }> = ({
+  _data,
+  _resources,
+  _comments,
+}) => {
   const classes = useStyles();
   const router = useRouter();
   const [resourceClicked, setResourceClicked] = useState(false);

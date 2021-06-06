@@ -16,7 +16,7 @@ export const getAuthHeaders = () => {
 
 export const usePostForImage = async (url: string, val: any, extraHeaderArgs: any) => {
 
-    let _data = {};
+    let _data: any = {};
     let error = "";
     let code: number;
     try {

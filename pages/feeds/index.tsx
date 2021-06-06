@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import FeedForm from "../../components/Forms/FeedForm";
-import Header from "../../components/Header";
 import FeedList from "./../../components/FeedList";
 import Container from "@material-ui/core/Container";
 import { Filter } from "../../components/Filter";
@@ -9,7 +8,6 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { FEED_URL, HOME_URL } from "../../hooks/constants";
 import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
-import { useCookies } from "react-cookie";
 import { GetServerSideProps } from "next";
 import { IFeed } from "../../components/Feed";
 import { getFilterURL, getNewQuery, isEmpty } from "../../helper";
@@ -39,7 +37,7 @@ export interface IFeedsList {
   };
 }
 
-const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
+const FeedPage = ({ feeds, err }: { feeds: IFeedsList; err: any }) => {
   const classes = useStyles();
   const router = useRouter();
 

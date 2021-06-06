@@ -8,7 +8,6 @@ import QuickLinkList, {
   IQuickLinkProps,
 } from "../../components/QuickLinkList";
 import QuickLinkForm from "../../components/Forms/QuickLinkForm";
-import Header from "../../components/Header";
 import { SLOGAN, SLOGAN_DESC } from "../../constants";
 import OpenGraphTags from "../../components/OpenGraphTags";
 
@@ -24,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const QuickLinksPage = () => {
-  const [quickLinks, setQuickLinks] = useState<IQuickLinkProps>();
+  const [quickLinks, setQuickLinks] = useState<IQuickLinkProps | any>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

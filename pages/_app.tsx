@@ -27,10 +27,16 @@ export const UserContext = createContext<{
   dispatch: React.Dispatch<any>;
 }>({ state: initialUserState, dispatch: () => null });
 
-function MyComponent({ Component, pageProps }) {
+function MyComponent({
+  Component,
+  pageProps,
+}: {
+  Component: any;
+  pageProps: any;
+}) {
   useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
-    if (jssStyles) {
+    if (jssStyles && jssStyles.parentElement) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);

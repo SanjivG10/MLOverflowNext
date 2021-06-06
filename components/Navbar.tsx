@@ -103,7 +103,7 @@ export default function Navbar() {
     }
   }, [state.loginStatus]);
 
-  const responseGoogle = async (response: GoogleLoginResponse) => {
+  const responseGoogle = async (response: any) => {
     const { accessToken, profileObj } = response;
 
     let user_img = "";

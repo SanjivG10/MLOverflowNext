@@ -16,15 +16,6 @@ const theme = createMuiTheme({
     background: {
       default: "white",
     },
-    hover: {
-      main: "#F8F9FA",
-    },
-  },
-  styles: {
-    onHover: {
-      background: "#F8F9FA",
-      cursor: "pointer",
-    },
   },
 });
 

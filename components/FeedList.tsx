@@ -13,7 +13,7 @@ import { isEmpty } from "../helper";
 type FeedProps = {
   originalFeed?: boolean;
   data: IFeedsList;
-  home: boolean;
+  home?: boolean;
 };
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -74,7 +74,7 @@ export default function FeedList({ originalFeed, data, home }: FeedProps) {
     setFeedsData({ ...feedsData, results: newFeedsData });
   };
 
-  const editSuccess = (feed: IFeed) => {
+  const editSuccessFeed = (feed: IFeed) => {
     let newFeedsData = { ...feedsData };
     for (let i = 0; i < newFeedsData.results.length; i++) {
       const oldFeed = newFeedsData.results[i];
@@ -121,8 +121,8 @@ export default function FeedList({ originalFeed, data, home }: FeedProps) {
                 <div className={classes.feed} key={item.id}>
                   <Feed
                     home={home}
-                    editSuccess={editSuccess}
                     {...item}
+                    editSuccessFromList={editSuccessFeed}
                     key={item.id}
                     updateOnDelete={updateOnDelete}
                   />

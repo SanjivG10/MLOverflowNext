@@ -11,7 +11,7 @@ const errorHandler = (field: string, type: string) => {
 };
 
 
-const isEmpty = (text) => {
+const isEmpty = (text: string | undefined) => {
     if (text) {
         return text.trim() === "" || text.trim().length === 0;
     }

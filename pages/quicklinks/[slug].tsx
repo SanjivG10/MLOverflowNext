@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const QuickLinkPage: React.FC = ({ _data }) => {
+const QuickLinkPage: React.FC<{ _data: any }> = ({ _data }) => {
   const classes = useStyles();
 
   const [data, setData] = useState<IQuickLink | any>(_data);
@@ -69,7 +69,7 @@ export default QuickLinkPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  let _data = {};
+  let _data: any = {};
   try {
     const { data } = await axios.get(
       QUICKLINK_URL + `${slug}/`,

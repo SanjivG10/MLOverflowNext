@@ -29,11 +29,12 @@ export interface IFeed {
   text: string;
   id: number;
   slug: string;
-  editSuccess: (feed: IFeed) => {};
+  editSuccess: (feed: IFeed) => void;
   hasVoted: boolean;
   hasBookmarked: boolean;
   updateOnDelete?: (slug: string) => void;
   home?: boolean;
+  editSuccessFromList?: (feed: IFeed) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -79,7 +80,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     clickPost: {
       "&:hover": {
-        ...theme.styles.onHover,
+        background: "#F8F9FA",
+        cursor: "pointer",
       },
     },
     modal: {
@@ -116,6 +118,7 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
     hasVoted,
     updateOnDelete,
     home,
+    editSuccessFromList,
   } = props;
 
   const { push } = useRouter();
@@ -355,7 +358,12 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
         ) : (
           <FeedForm
             successSubmit={(feed) => {
-              editSuccess(feed);
+              if (editSuccess) {
+                editSuccess(feed);
+              }
+              if (editSuccessFromList) {
+                editSuccessFromList(feed);
+              }
               setOpen(false);
             }}
             data={props}

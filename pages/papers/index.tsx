@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import PaperForm from "../../components/Forms/PaperForm";
-import Header from "../../components/Header";
 import PaperList from "./../../components/PaperList";
 import Container from "@material-ui/core/Container";
 import Accordion from "@material-ui/core/Accordion";
@@ -31,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const PaperPage = ({ papers }) => {
+const PaperPage = ({ papers }: { papers: any }) => {
   const classes = useStyles();
   const router = useRouter();
 

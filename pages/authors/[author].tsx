@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const AuthorPage = ({ papers }) => {
+const AuthorPage = ({ papers }: { papers: any }) => {
   const classes = useStyles();
   const { query } = useRouter();
   const { author } = query;

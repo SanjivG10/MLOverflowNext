@@ -106,26 +106,27 @@ const QuickLinkForm = ({ successSubmit, data }: IProps) => {
 
     if (!isEmpty(imageData)) {
       const image_link = HOME_URL_WITHOUT_SLASH + imageData.src;
+      if (data && data.id) {
+        const [quickLink, myerr] = await usePut(QUICKLINK_URL + `${data.id}/`, {
+          slug,
+          name,
+          description: desc,
+          image: image_link,
+          link,
+        });
 
-      const [quickLink, myerr] = await usePut(QUICKLINK_URL + `${data.id}/`, {
-        slug,
-        name,
-        description: desc,
-        image: image_link,
-        link,
-      });
-
-      if (!isEmpty(quickLink)) {
-        successSubmit(quickLink);
-        setName("");
-        setDesc("");
-        setImage(null);
-        setLink("");
-        setSlug("");
-        setError("");
-        setSlugError(false);
-      } else {
-        setError(myerr);
+        if (!isEmpty(quickLink)) {
+          successSubmit(quickLink);
+          setName("");
+          setDesc("");
+          setImage(null);
+          setLink("");
+          setSlug("");
+          setError("");
+          setSlugError(false);
+        } else {
+          setError(myerr);
+        }
       }
     }
 

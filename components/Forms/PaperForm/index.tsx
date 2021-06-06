@@ -182,35 +182,37 @@ export default function PaperForm({
   };
 
   const editPaper = async () => {
-    const [paper, error] = await usePut(PAPER_URL + `${data.id}/`, {
-      title,
-      abstract,
-      meta,
-      link,
-      model,
-      dataset,
-      published_at: selectedDate?.format("YYYY-MM-DD"),
-      codes: [{ link: code, language: codeType }],
-      tags,
-      authors,
-      slug: "mloverflow",
-    });
+    if (data && data.id) {
+      const [paper, error] = await usePut(PAPER_URL + `${data.id}/`, {
+        title,
+        abstract,
+        meta,
+        link,
+        model,
+        dataset,
+        published_at: selectedDate?.format("YYYY-MM-DD"),
+        codes: [{ link: code, language: codeType }],
+        tags,
+        authors,
+        slug: "mloverflow",
+      });
 
-    if (!isEmpty(paper)) {
-      onSuccess(paper);
-      setAbstract("");
-      setTags([]);
-      setTitle("");
-      setAuthors([]);
-      setCode("");
-      setCodeType("");
-      handleDateChange(null);
-      setMeta("");
-      setLink("");
-      setModel("");
-      setDataset("");
-    } else {
-      setError(error);
+      if (!isEmpty(paper)) {
+        onSuccess(paper);
+        setAbstract("");
+        setTags([]);
+        setTitle("");
+        setAuthors([]);
+        setCode("");
+        setCodeType("");
+        handleDateChange(null);
+        setMeta("");
+        setLink("");
+        setModel("");
+        setDataset("");
+      } else {
+        setError(error);
+      }
     }
   };
 

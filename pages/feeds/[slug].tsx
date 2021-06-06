@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   commentList: {},
 }));
 
-const FeedPage: React.FC = ({ _data, comments }) => {
+const FeedPage = ({ _data, comments }: { _data: any; comments: any }) => {
   const classes = useStyles();
 
   const [data, setData] = useState<IFeed | any>(_data);

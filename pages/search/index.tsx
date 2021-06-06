@@ -34,7 +34,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   quickLinkContainer: {},
 }));
 
-const Profile = ({ papers, feeds, quickLinks }) => {
+const Search = ({
+  papers,
+  feeds,
+  quickLinks,
+}: {
+  papers: any;
+  feeds: any;
+  quickLinks: any;
+}) => {
   const classes = useStyles();
   const { query } = useRouter();
   const { key } = query;
@@ -65,9 +73,9 @@ const Profile = ({ papers, feeds, quickLinks }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  let papers = {};
-  let feeds = {};
-  let quickLinks = {};
+  let papers: any = {};
+  let feeds: any = {};
+  let quickLinks: any = {};
 
   const { key } = ctx.query;
 
@@ -84,4 +92,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return { props: { papers, feeds, quickLinks } };
 };
 
-export default Profile;
+export default Search;

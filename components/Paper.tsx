@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.paper,
       marginBottom: 40,
       "&:hover": {
-        ...theme.styles.onHover,
+        cursor: "pointer",
       },
       boxShadow: "2px 2px 2px 2px #DAE0E6",
       padding: 10,

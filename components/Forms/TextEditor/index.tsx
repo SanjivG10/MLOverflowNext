@@ -1,11 +1,13 @@
-import React from "react";
+// @ts-nocheck
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 const Editor = dynamic(
   () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
-  { ssr: false }
+  { ssr: false, loading: <Spinner /> }
 );
 import { colors, emojis } from "./constants";
 import { EditorState } from "react-draft-wysiwyg";
+import Spinner from "../../Spinner";
 
 interface IProps {
   editorState: EditorState;
@@ -21,6 +23,12 @@ export default function TextEditor({
   uploadCallback,
   disabled,
 }: IProps) {
+  const [editor, setEditor] = useState<boolean>(false);
+
+  useEffect(() => {
+    setEditor(true);
+  }, []);
+
   const toolbarConfig = {
     options: [
       "link",
@@ -98,15 +106,17 @@ export default function TextEditor({
   };
 
   return (
-    <Editor
-      toolbar={toolbarConfig}
-      editorState={editorState}
-      placeholder={placeholder}
-      editorClassName="feedFormReact"
-      wrapperClassName="wrapperFormReact"
-      onEditorStateChange={onEditorStateChange}
-      stripPastedStyles={true}
-      readOnly={disabled}
-    />
+    editor && (
+      <Editor
+        toolbar={toolbarConfig}
+        editorState={editorState}
+        placeholder={placeholder}
+        editorClassName="feedFormReact"
+        wrapperClassName="wrapperFormReact"
+        onEditorStateChange={onEditorStateChange}
+        stripPastedStyles={true}
+        readOnly={disabled}
+      />
+    )
   );
 }
