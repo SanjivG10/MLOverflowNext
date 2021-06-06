@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useEffect, useState } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 const Editor = dynamic(
   () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
@@ -23,12 +23,6 @@ export default function TextEditor({
   uploadCallback,
   disabled,
 }: IProps) {
-  const [editor, setEditor] = useState<boolean>(false);
-
-  useEffect(() => {
-    setEditor(true);
-  }, []);
-
   const toolbarConfig = {
     options: [
       "link",
@@ -106,17 +100,15 @@ export default function TextEditor({
   };
 
   return (
-    editor && (
-      <Editor
-        toolbar={toolbarConfig}
-        editorState={editorState}
-        placeholder={placeholder}
-        editorClassName="feedFormReact"
-        wrapperClassName="wrapperFormReact"
-        onEditorStateChange={onEditorStateChange}
-        stripPastedStyles={true}
-        readOnly={disabled}
-      />
-    )
+    <Editor
+      toolbar={toolbarConfig}
+      editorState={editorState}
+      placeholder={placeholder}
+      editorClassName="feedFormReact"
+      wrapperClassName="wrapperFormReact"
+      onEditorStateChange={onEditorStateChange}
+      stripPastedStyles={true}
+      readOnly={disabled}
+    />
   );
 }
