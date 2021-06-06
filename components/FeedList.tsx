@@ -107,7 +107,7 @@ export default function FeedList({ originalFeed, data, home }: FeedProps) {
       <InfiniteScroll
         dataLength={feedsData?.results?.length || 0}
         next={fetchMoreData}
-        hasMore={Boolean(feedsData?.links?.next) || false}
+        hasMore={(!home && Boolean(feedsData?.links?.next)) || false}
         loader={<Spinner />}
       >
         {" "}
