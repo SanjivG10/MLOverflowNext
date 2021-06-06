@@ -1,12 +1,11 @@
 import React from "react";
-import Header from "../components/Header";
 import { makeStyles } from "@material-ui/core/styles";
 import { Container } from "@material-ui/core";
 import Jumbotron from "./../components/Jumbotron";
 import QuickLinks from "../components/QuickLinks";
 import PaperList from "../components/PaperList";
 import FeedsList from "../components/FeedList";
-import { SLOGAN } from "../constants";
+import { SLOGAN, SLOGAN_DESC } from "../constants";
 import { fetcher } from "./../hooks/requests";
 import {
   PAPER_URL_HOME,
@@ -14,7 +13,9 @@ import {
   TAGS_URL,
   QUOTE_URL,
   QUICKLINK_URL,
+  HOME_URL,
 } from "../hooks/constants";
+import OpenGraphTags from "../components/OpenGraphTags";
 
 const useStyles = makeStyles((theme) => ({
   homePageContainer: {
@@ -33,9 +34,17 @@ const useStyles = makeStyles((theme) => ({
 const Index = ({ feeds, papers, quote, tags, quickLinks }) => {
   const classes = useStyles();
 
+  const oGprops = {
+    title: SLOGAN,
+    description: SLOGAN_DESC,
+    ogTitle: SLOGAN,
+    image: "/logo_white.png",
+    url: HOME_URL,
+  };
+
   return (
     <div className={classes.homePageContainer}>
-      <Header title={SLOGAN} />
+      <OpenGraphTags {...oGprops} />
 
       <Container>
         <Jumbotron quote={quote} tags={tags} />
@@ -65,7 +74,10 @@ export async function getStaticProps() {
     console.log(error);
   }
 
-  return { props: { quote, papers, feeds, tags, quickLinks } };
+  return {
+    props: { quote, papers, feeds, tags, quickLinks },
+    revalidate: 60 * 30,
+  };
 }
 
 export default Index;

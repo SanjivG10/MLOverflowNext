@@ -6,10 +6,12 @@ import Feed, { IFeed } from "../../components/Feed";
 import CommentForm from "../../components/Forms/CommentForm";
 import CommentList from "./../../components/CommentList";
 import axios from "axios";
-import { COMMENT_URL, FEED_URL } from "../../hooks/constants";
+import { COMMENT_URL, FEED_URL, HOME_URL } from "../../hooks/constants";
 import { getAuthHeadersFromCookie } from "../../hooks/requests";
 import { GetServerSideProps } from "next";
 import { IComment } from "../../components/Comment";
+import { FEED_TITLE } from "../../constants";
+import OpenGraphTags from "../../components/OpenGraphTags";
 
 const useStyles = makeStyles((theme: Theme) => ({
   main: {
@@ -50,9 +52,30 @@ const FeedPage: React.FC = ({ _data, comments }) => {
     setFeedComments(newFeedComments);
   };
 
+  const getTextAndImage = (text: string) => {
+    const span = document.createElement("div");
+    span.innerHTML = text;
+    let imgSrc = "";
+    const image_container = span.querySelector("img");
+    if (image_container !== null) {
+      imgSrc = image_container.getAttribute("src") || "/logo_white.png";
+    }
+    return [span.textContent || span.innerText, imgSrc];
+  };
+
+  const [title, img] = getTextAndImage(data.text);
+
+  const oGprops = {
+    title: title ? title.substr(0, 100) : FEED_TITLE,
+    description: title || FEED_TITLE,
+    ogTitle: title ? title.substr(0, 100) : FEED_TITLE,
+    image: img,
+    url: HOME_URL + "feeds/" + `${data.slug}`,
+  };
+
   return (
     <div className={classes.main}>
-      <Header title="Feeds" />
+      <OpenGraphTags {...oGprops} />
       <Grid container spacing={3} className={classes.container}>
         <Grid item sm={6}>
           <div className={classes.feed}>

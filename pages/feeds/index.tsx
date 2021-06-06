@@ -7,12 +7,14 @@ import Container from "@material-ui/core/Container";
 import { Filter } from "../../components/Filter";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { FEED_URL } from "../../hooks/constants";
+import { FEED_URL, HOME_URL } from "../../hooks/constants";
 import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { useCookies } from "react-cookie";
 import { GetServerSideProps } from "next";
 import { IFeed } from "../../components/Feed";
 import { getFilterURL, getNewQuery, isEmpty } from "../../helper";
+import { FEED_LIST_TITLE } from "../../constants";
+import OpenGraphTags from "../../components/OpenGraphTags";
 
 const useStyles = makeStyles((theme) => ({
   postList: {
@@ -107,9 +109,17 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList }) => {
     getFilterData();
   };
 
+  const oGprops = {
+    title: FEED_LIST_TITLE,
+    description: FEED_LIST_TITLE,
+    ogTitle: FEED_LIST_TITLE,
+    image: "/logo_white.png",
+    url: HOME_URL + "feeds/",
+  };
+
   return (
     <div>
-      <Header title="Feeds" />
+      <OpenGraphTags {...oGprops} />
       <FeedForm successSubmit={successSubmit} />
       <div className={classes.postList}>
         <Container>

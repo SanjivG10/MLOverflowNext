@@ -15,6 +15,7 @@ import TextField from "@material-ui/core/TextField";
 import Link from "next/link";
 import {
   COMMENT_URL_PAPER,
+  HOME_URL,
   PAPER_URL,
   RESOURCE_URL,
 } from "../../hooks/constants";
@@ -34,6 +35,8 @@ import { isEmpty } from "../../helper";
 import CommentList from "../../components/CommentList";
 import { IComment } from "../../components/Comment";
 import { UserContext } from "../_app";
+import OpenGraphTags from "../../components/OpenGraphTags";
+import { PAPER_TITLE } from "../../constants";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -247,9 +250,18 @@ const PaperPage: React.FC = ({ _data, _resources, _comments }) => {
     setPaperComments(newPaperComments);
   };
 
+  const oGprops = {
+    title: data.title || PAPER_TITLE,
+    description: data.abstract || "",
+    ogTitle: data.title || PAPER_TITLE,
+    image: "/logo_white.png",
+    url: HOME_URL + "papers/" + data.slug,
+  };
+
   return (
     <div className={classes.root}>
-      <Header title={data.title} />
+      <OpenGraphTags {...oGprops} />
+
       <Paper className={classes.container}>
         <div className={classes.beautify}>
           <h2 className={classes.title}>{data.title}</h2>

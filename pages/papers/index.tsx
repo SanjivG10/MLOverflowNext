@@ -9,7 +9,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { PAPER_URL } from "../../hooks/constants";
+import { HOME_URL, PAPER_URL } from "../../hooks/constants";
 import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { GetServerSideProps } from "next";
 import axios from "axios";
@@ -17,6 +17,8 @@ import { IPaper } from "../../components/Paper";
 import { useRouter } from "next/router";
 import { Filter } from "../../components/Filter";
 import { getFilterURL, getNewQuery, isEmpty } from "../../helper";
+import { PAPER_LIST_DESC, PAPER_LIST_TITLE } from "../../constants";
+import OpenGraphTags from "../../components/OpenGraphTags";
 
 const useStyles = makeStyles((theme: Theme) => ({
   postList: {},
@@ -123,10 +125,17 @@ const PaperPage = ({ papers }) => {
     getFilterData();
   };
 
+  const oGprops = {
+    title: PAPER_LIST_TITLE,
+    description: PAPER_LIST_DESC,
+    ogTitle: PAPER_LIST_TITLE,
+    image: "/logo_white.png",
+    url: HOME_URL + "papers/",
+  };
+
   return (
     <div>
-      <Header title="Papers" />
-
+      <OpenGraphTags {...oGprops} />
       <Container className={classes.postList}>
         <Accordion className={classes.accordion}>
           <AccordionSummary

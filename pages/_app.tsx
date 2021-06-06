@@ -8,6 +8,9 @@ import theme from "./../theme";
 import "../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import Modal from "../components/Modal";
 import Button from "@material-ui/core/Button";
+import { SLOGAN, SLOGAN_DESC } from "../constants";
+import { HOME_URL } from "../hooks/constants";
+import OpenGraphTags from "../components/OpenGraphTags";
 
 type UserStateType = {
   show: boolean;

@@ -5,8 +5,10 @@ import PapersList from "../../components/PaperList";
 import { Container } from "@material-ui/core";
 import { useRouter } from "next/router";
 import { fetcher } from "../../hooks/requests";
-import { PAPER_URL } from "../../hooks/constants";
+import { HOME_URL, PAPER_URL } from "../../hooks/constants";
 import { GetServerSideProps } from "next";
+import { AUTHOR_DESC } from "../../constants";
+import OpenGraphTags from "../../components/OpenGraphTags";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -33,9 +35,17 @@ const AuthorPage = ({ papers }) => {
   const { query } = useRouter();
   const { author } = query;
 
+  const oGprops = {
+    title: author + " results",
+    description: AUTHOR_DESC,
+    ogTitle: author + "results",
+    image: "/logo_white.png",
+    url: HOME_URL + `/authors/${author}`,
+  };
+
   return author ? (
     <div className={classes.container}>
-      <Header title={author + " results"} />
+      <OpenGraphTags {...oGprops} />
       <Container>
         <div>
           <PapersList original data={papers} />
