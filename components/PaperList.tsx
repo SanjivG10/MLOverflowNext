@@ -5,6 +5,11 @@ import Paper, { IPaper } from "./Paper";
 import Link from "next/link";
 import Button from "@material-ui/core/Button";
 import { useRouter } from "next/router";
+import Spinner from "./Spinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Grid } from "@material-ui/core";
+import { useGet } from "../hooks/requests";
+import { isEmpty } from "../helper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function PapersList({
   original,
   data,
+  home,
 }: {
   original?: boolean;
   data: {
@@ -63,6 +69,7 @@ export default function PapersList({
       };
     };
   };
+  home?: boolean;
 }) {
   const classes = useStyles();
   const router = useRouter();
@@ -74,6 +81,18 @@ export default function PapersList({
       setPapers(data);
     }
   }, [data]);
+
+  const fetchMoreData = async () => {
+    if (papers?.links?.next) {
+      const [data] = await useGet(papers.links.next);
+      if (!isEmpty(data)) {
+        setPapers({
+          ...data,
+          results: [...papers.results, ...data.results],
+        });
+      }
+    }
+  };
 
   return (
     <>
@@ -88,19 +107,28 @@ export default function PapersList({
         aria-labelledby="nested-list-subheader"
         className={classes.root}
       >
-        {papers?.results?.length === 0 && (
-          <h3 className={classes.noPaper}>no paper found</h3>
-        )}
-        {papers?.results?.map((item: IPaper) => {
-          return (
-            <div
-              key={item.id}
-              onClick={() => router.push(`/papers/${item.slug}`)}
-            >
-              <Paper {...item} />
-            </div>
-          );
-        })}
+        <InfiniteScroll
+          dataLength={papers?.results?.length || 0}
+          next={fetchMoreData}
+          hasMore={(!home && Boolean(papers?.links?.next)) || false}
+          loader={<Spinner />}
+        >
+          <>
+            {papers?.results?.length === 0 && (
+              <div className={classes.noPaper}>no posts found</div>
+            )}
+            {papers?.results?.map((item: IPaper) => {
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => router.push(`/papers/${item.slug}`)}
+                >
+                  <Paper {...item} />
+                </div>
+              );
+            })}
+          </>
+        </InfiniteScroll>
       </List>
 
       {!original && papers?.results?.length > 0 && (

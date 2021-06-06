@@ -61,7 +61,7 @@ const Index = ({
       <Container>
         <Jumbotron quote={quote} tags={tags} />
         <FeedsList home data={feeds} />
-        <PaperList data={papers} />
+        <PaperList home data={papers} />
         <QuickLinks original={false} data={quickLinks} />
       </Container>
     </div>
