@@ -16,7 +16,7 @@ export const getAuthHeaders = () => {
 
 export const usePostForImage = async (url: string, val: any, extraHeaderArgs: any) => {
 
-    let _data: AxiosResponse<any> | {} = {};
+    let _data = {};
     let error = "";
     let code: number;
     try {
@@ -77,7 +77,7 @@ export const handleAxiosError = (error: AxiosError) => {
 }
 
 export const useGet = async (url: string) => {
-    let _data: AxiosResponse<any> | {} = {};
+    let _data: any = {};
     let error = "";
     let code: number;
 
@@ -97,7 +97,7 @@ export const useGet = async (url: string) => {
 }
 
 export const usePut = async (url: string, val: any) => {
-    let _data: AxiosResponse<any> | {} = {};
+    let _data: any = {};
     let error = "";
     let code: number;
     try {
@@ -115,7 +115,7 @@ export const usePut = async (url: string, val: any) => {
 
 export const usePatch = async (url: string, val: any) => {
 
-    let _data: AxiosResponse<any> = {};
+    let _data: any = {};
     let error = "";
     let code: number;
     try {
@@ -132,7 +132,7 @@ export const usePatch = async (url: string, val: any) => {
 
 export const useDelete = async (url: string) => {
 
-    let _data: AxiosResponse<any> | {} = {};
+    let _data: any = {};
     let error = "";
     let code: number;
     try {
@@ -149,7 +149,7 @@ export const useDelete = async (url: string) => {
 
 
 export const usePost = async (url: string, val: any, useAuth = true) => {
-    let _data: AxiosResponse<any> | {} = {};
+    let _data: any = {};
     let error = "";
     let code: number;
     try {
