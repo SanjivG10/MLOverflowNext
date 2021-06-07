@@ -8,7 +8,12 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { HOME_URL, PAPER_URL } from "../../hooks/constants";
+import {
+  HOME_URL,
+  HOME_URL_OPEN_GRAPH,
+  PAPER_URL,
+  PUBLIC_MEDIA_URL,
+} from "../../hooks/constants";
 import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { GetServerSideProps } from "next";
 import axios from "axios";
@@ -129,7 +134,7 @@ const PaperPage = ({ papers }: { papers: any }) => {
     description: PAPER_LIST_DESC,
     ogTitle: PAPER_LIST_TITLE,
     image: "/logo_white.png",
-    url: HOME_URL + "papers/",
+    url: HOME_URL_OPEN_GRAPH + "papers/",
   };
 
   return (

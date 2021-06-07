@@ -3,6 +3,7 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import {
   HOME_URL,
   HOME_URL_OPEN_GRAPH,
+  PUBLIC_MEDIA_URL,
   QUICKLINK_URL,
 } from "../../hooks/constants";
 import { useGet } from "../../hooks/requests";

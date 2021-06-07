@@ -1,6 +1,7 @@
 export const HOME_URL_FOR_COPY = process.env.NEXT_PUBLIC_MODE === "debug" ? "http://localhost:3000/" : "https://api.mloverflow.com/"
 export const HOME_URL_WITHOUT_SLASH = process.env.NEXT_PUBLIC_MODE === "debug" ? "http://localhost:8000" : "https://api.mloverflow.com"
 export const HOME_URL_OPEN_GRAPH = "https://mloverflow.com/";
+export const PUBLIC_MEDIA_URL = HOME_URL_WITHOUT_SLASH + "/public/"
 export const HOME_URL = HOME_URL_WITHOUT_SLASH + "/"
 export const URL = HOME_URL + "api/v1/";
 export const LOGIN_URL = URL + "auth/google/"

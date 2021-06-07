@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import Header from "../../components/Header";
 import Feed, { IFeed } from "../../components/Feed";
 import CommentForm from "../../components/Forms/CommentForm";
 import CommentList from "./../../components/CommentList";
@@ -9,7 +8,6 @@ import axios from "axios";
 import {
   COMMENT_URL,
   FEED_URL,
-  HOME_URL,
   HOME_URL_OPEN_GRAPH,
 } from "../../hooks/constants";
 import { getAuthHeadersFromCookie } from "../../hooks/requests";
@@ -17,6 +15,7 @@ import { GetServerSideProps } from "next";
 import { IComment } from "../../components/Comment";
 import { FEED_TITLE } from "../../constants";
 import OpenGraphTags from "../../components/OpenGraphTags";
+import { parse } from "node-html-parser";
 
 const useStyles = makeStyles((theme: Theme) => ({
   main: {
@@ -58,14 +57,14 @@ const FeedPage = ({ _data, comments }: { _data: any; comments: any }) => {
   };
 
   const getTextAndImage = (text: string) => {
-    const span = document.createElement("div");
-    span.innerHTML = text;
+    const root = parse(text);
+
     let imgSrc = "";
-    const image_container = span.querySelector("img");
+    const image_container = root.querySelector("img");
     if (image_container !== null) {
       imgSrc = image_container.getAttribute("src") || "/logo_white.png";
     }
-    return [span.textContent || span.innerText, imgSrc];
+    return [root.text || root.rawText, imgSrc];
   };
 
   const [title, img] = getTextAndImage(data.text);

@@ -9,6 +9,7 @@ import {
   HOME_URL,
   HOME_URL_OPEN_GRAPH,
   PAPER_URL,
+  PUBLIC_MEDIA_URL,
 } from "../../hooks/constants";
 import { GetServerSideProps } from "next";
 import { AUTHOR_DESC } from "../../constants";

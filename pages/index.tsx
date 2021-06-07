@@ -15,6 +15,7 @@ import {
   QUICKLINK_URL,
   HOME_URL,
   HOME_URL_OPEN_GRAPH,
+  PUBLIC_MEDIA_URL,
 } from "../hooks/constants";
 import OpenGraphTags from "../components/OpenGraphTags";
 

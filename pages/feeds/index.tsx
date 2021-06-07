@@ -6,7 +6,7 @@ import Container from "@material-ui/core/Container";
 import { Filter } from "../../components/Filter";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { FEED_URL, HOME_URL } from "../../hooks/constants";
+import { FEED_URL, HOME_URL, PUBLIC_MEDIA_URL } from "../../hooks/constants";
 import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { GetServerSideProps } from "next";
 import { IFeed } from "../../components/Feed";
