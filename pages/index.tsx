@@ -90,7 +90,7 @@ export async function getStaticProps() {
 
   return {
     props: { quote, papers, feeds, tags, quickLinks },
-    revalidate: 60 * 30,
+    revalidate: 60 * 10, // every 10 minutes
   };
 }
 
