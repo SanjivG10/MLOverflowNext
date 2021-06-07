@@ -19,7 +19,7 @@ export default class MyDocument extends Document {
           <link
             rel="preconnect"
             href="https://fonts.gstatic.com"
-            crossOrigin="true"
+            crossOrigin="anonymous"
           />
           <link
             rel="preload"
@@ -29,9 +29,9 @@ export default class MyDocument extends Document {
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-            media="print"
+            media="none"
             // @ts-ignore
-            onLoad="this.media='all'"
+            onLoad='"all"!=media&&(media="all")'
           />
           <noscript>
             <link
