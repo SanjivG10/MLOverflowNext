@@ -6,7 +6,12 @@ import Feed, { IFeed } from "../../components/Feed";
 import CommentForm from "../../components/Forms/CommentForm";
 import CommentList from "./../../components/CommentList";
 import axios from "axios";
-import { COMMENT_URL, FEED_URL, HOME_URL } from "../../hooks/constants";
+import {
+  COMMENT_URL,
+  FEED_URL,
+  HOME_URL,
+  HOME_URL_OPEN_GRAPH,
+} from "../../hooks/constants";
 import { getAuthHeadersFromCookie } from "../../hooks/requests";
 import { GetServerSideProps } from "next";
 import { IComment } from "../../components/Comment";
@@ -70,7 +75,7 @@ const FeedPage = ({ _data, comments }: { _data: any; comments: any }) => {
     description: title || FEED_TITLE,
     ogTitle: title ? title.substr(0, 100) : FEED_TITLE,
     image: img,
-    url: HOME_URL + "feeds/" + `${data.slug}`,
+    url: HOME_URL_OPEN_GRAPH + "feeds/" + `${data.slug}`,
   };
 
   return (

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import { HOME_URL, QUICKLINK_URL } from "../../hooks/constants";
+import {
+  HOME_URL,
+  HOME_URL_OPEN_GRAPH,
+  QUICKLINK_URL,
+} from "../../hooks/constants";
 import { useGet } from "../../hooks/requests";
 import Spinner from "../../components/Spinner";
 import QuickLinkList, {
@@ -54,7 +58,7 @@ const QuickLinksPage = () => {
     description: SLOGAN_DESC,
     ogTitle: SLOGAN,
     image: "/logo_white.png",
-    url: HOME_URL,
+    url: HOME_URL_OPEN_GRAPH,
   };
 
   const classes = useStyles();

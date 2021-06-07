@@ -7,6 +7,7 @@ import {
   COMMENT_URL,
   FEED_URL,
   HOME_URL_FOR_COPY,
+  HOME_URL_OPEN_GRAPH,
   QUICKLINK_URL,
 } from "../../hooks/constants";
 import { getAuthHeadersFromCookie } from "../../hooks/requests";
@@ -48,7 +49,7 @@ const QuickLinkPage: React.FC<{ _data: any }> = ({ _data }) => {
     description: data.description,
     ogTitle: data.name || QUICK_LINK_TITLE,
     image: data.image,
-    url: HOME_URL_FOR_COPY + "quicklinks/" + data.slug,
+    url: HOME_URL_OPEN_GRAPH + "quicklinks/" + data.slug,
   };
 
   return (

@@ -5,7 +5,11 @@ import PapersList from "../../components/PaperList";
 import { Container } from "@material-ui/core";
 import { useRouter } from "next/router";
 import { fetcher } from "../../hooks/requests";
-import { HOME_URL, PAPER_URL } from "../../hooks/constants";
+import {
+  HOME_URL,
+  HOME_URL_OPEN_GRAPH,
+  PAPER_URL,
+} from "../../hooks/constants";
 import { GetServerSideProps } from "next";
 import { AUTHOR_DESC } from "../../constants";
 import OpenGraphTags from "../../components/OpenGraphTags";
@@ -40,7 +44,7 @@ const AuthorPage = ({ papers }: { papers: any }) => {
     description: AUTHOR_DESC,
     ogTitle: author + "results",
     image: "/logo_white.png",
-    url: HOME_URL + `/authors/${author}`,
+    url: HOME_URL_OPEN_GRAPH + `/authors/${author}`,
   };
 
   return author ? (

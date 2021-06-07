@@ -14,6 +14,7 @@ import {
   QUOTE_URL,
   QUICKLINK_URL,
   HOME_URL,
+  HOME_URL_OPEN_GRAPH,
 } from "../hooks/constants";
 import OpenGraphTags from "../components/OpenGraphTags";
 
@@ -51,7 +52,7 @@ const Index = ({
     description: SLOGAN_DESC,
     ogTitle: SLOGAN,
     image: "/home_page.JPG",
-    url: HOME_URL,
+    url: HOME_URL_OPEN_GRAPH,
   };
 
   return (

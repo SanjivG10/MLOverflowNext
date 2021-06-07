@@ -16,6 +16,7 @@ import Link from "next/link";
 import {
   COMMENT_URL_PAPER,
   HOME_URL,
+  HOME_URL_OPEN_GRAPH,
   PAPER_URL,
   RESOURCE_URL,
 } from "../../hooks/constants";
@@ -259,7 +260,7 @@ const PaperPage: React.FC<{ _data: any; _resources: any; _comments: any }> = ({
     description: data.abstract || "",
     ogTitle: data.title || PAPER_TITLE,
     image: "/logo_white.png",
-    url: HOME_URL + "papers/" + data.slug,
+    url: HOME_URL_OPEN_GRAPH + "papers/" + data.slug,
   };
 
   return (
