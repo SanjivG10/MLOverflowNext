@@ -82,6 +82,7 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
                     src={item.image}
                     alt={item.name}
                     className={classes.img}
+                    loading="lazy"
                   />
                 </Grid>
               </Tooltip>
