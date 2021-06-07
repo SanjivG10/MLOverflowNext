@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       height: "100%",
       position: "relative",
+      padding: 4,
     },
     avatar: {
       height: "100%",
