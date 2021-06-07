@@ -110,7 +110,7 @@ export default function PapersList({
         <InfiniteScroll
           dataLength={papers?.results?.length || 0}
           next={fetchMoreData}
-          hasMore={Boolean(papers?.links?.next) || false}
+          hasMore={home ? false : Boolean(papers?.links?.next) || false}
           loader={<Spinner />}
         >
           <>
