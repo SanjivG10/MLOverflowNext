@@ -8,6 +8,11 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+          <script
+            data-ad-client="ca-pub-1938448871602389"
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+          ></script>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
 
