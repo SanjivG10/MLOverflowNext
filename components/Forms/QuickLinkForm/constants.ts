@@ -1,4 +1,4 @@
-import { HOME_URL } from "../../../hooks/constants"
+import { HOME_URL, HOME_URL_OPEN_GRAPH } from "../../../hooks/constants"
 
 export const slug_placeholder = "Add an endpoint"
 export const slug_tip = HOME_URL + "quicklinks/{end-point}";
@@ -28,7 +28,7 @@ export const ValidationFormAttrs = {
         fieldLength: 100,
         "fieldName": "url",
         "placeholder": "Add an endpoint",
-        tip: HOME_URL + "quicklinks/{endpoint}"
+        tip: HOME_URL_OPEN_GRAPH + "quicklinks/{endpoint}"
     }
 }
 
