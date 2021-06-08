@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import { HOME_URL } from "../../hooks/constants";
+import { HOME_URL, HOME_URL_OPEN_GRAPH } from "../../hooks/constants";
 
 interface IProps {
   placeholder: string;
@@ -47,7 +47,9 @@ const SlugField = (props: IProps) => {
             const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/gim;
             const value = e.target.value.toLowerCase();
             setData(value);
-            setToolTip(HOME_URL + `${link ? link : "/feeds"}/${value}`);
+            setToolTip(
+              HOME_URL_OPEN_GRAPH + `${link ? link : "feeds"}/${value}`
+            );
             if (!slugRegex.test(value)) {
               setError(true);
             } else {
