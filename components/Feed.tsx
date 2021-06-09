@@ -319,7 +319,7 @@ const Feeds: React.FC<IFeed> = (props: IFeed) => {
           <Typography variant="body2" color="textSecondary">
             <div
               dangerouslySetInnerHTML={{ __html: text }}
-              className="renderHTML"
+              className="renderHTML removeScrollBar"
             ></div>
           </Typography>
         </CardContent>
