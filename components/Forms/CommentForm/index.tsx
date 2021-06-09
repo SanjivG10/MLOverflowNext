@@ -21,6 +21,7 @@ import {
 } from "../../../hooks/constants";
 import Spinner from "../../Spinner";
 import { UserContext } from "../../../pages/_app";
+import linkifyHtml from "linkifyjs/html";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {},
@@ -114,7 +115,17 @@ const CommentForm = ({
     }
     setPosting(true);
     const rawState = convertToRaw(editorState.getCurrentContent());
-    const text = draftToHtml(rawState);
+    let text = draftToHtml(rawState);
+
+    text = linkifyHtml(text, {
+      target: {
+        url: "_blank",
+      },
+
+      attributes: {
+        rel: "noopener noreferrer",
+      },
+    });
     if (data && data.id) {
       const URL = paperComment
         ? COMMENT_URL_PAPER + `${data.id}/`
