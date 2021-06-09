@@ -28,6 +28,7 @@ import {
 import Spinner from "../../Spinner";
 import { IFeed } from "../../Feed";
 import { UserContext } from "./../../../pages/_app";
+import linkifyHtml from "linkifyjs/html";
 
 interface IProps {
   successSubmit: (obj: any) => void;
@@ -84,6 +85,7 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
   const [slug, setSlug] = useState<string>("");
   const [slugError, setSlugError] = useState<boolean>(true);
   const [posting, setPosting] = useState<boolean>(false);
+
   const onEditorStateChange = (newEditorState: EditorState) => {
     setEditorState(newEditorState);
   };
@@ -175,7 +177,17 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
     }
     setPosting(true);
     const rawState = convertToRaw(editorState.getCurrentContent());
-    const text = draftToHtml(rawState);
+    let text = draftToHtml(rawState);
+    text = linkifyHtml(text, {
+      target: {
+        url: "_blank",
+      },
+
+      attributes: {
+        rel: "noopener noreferrer",
+      },
+    });
+
     if (data && data.id) {
       editFeed(text);
     } else {

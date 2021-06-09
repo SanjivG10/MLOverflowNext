@@ -116,7 +116,7 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
   };
 
   return (
-    <div className={classes.container} id="scrollableDiv">
+    <div className={classes.container} id="resources">
       <h3>Resources</h3>
 
       <InfiniteScroll
@@ -124,7 +124,7 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
         next={fetchMoreResources}
         hasMore={Boolean(resources?.links?.next) || false}
         loader={<Spinner />}
-        scrollableTarget="scrollableDiv"
+        scrollableTarget="resources"
       >
         <>
           {resources?.results?.map((resource: Resource) => {

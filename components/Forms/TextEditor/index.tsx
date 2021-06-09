@@ -25,6 +25,7 @@ export default function TextEditor({
   const toolbarConfig = {
     options: [
       "link",
+      "blockType",
       "list",
       "textAlign",
       "inline",
