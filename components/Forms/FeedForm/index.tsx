@@ -212,7 +212,7 @@ const FeedForm = ({ successSubmit, data }: IProps) => {
         <TagForm
           setTags={setTags}
           placeholder={tagPlaceHolder}
-          length={100}
+          length={50}
           maxNumber={TAGS_LENGTH}
           setError={setError}
           tags={tags}
