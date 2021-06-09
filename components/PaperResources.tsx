@@ -122,7 +122,7 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
       <InfiniteScroll
         dataLength={resources?.results?.length || 0}
         next={fetchMoreResources}
-        hasMore={Boolean(resources.links.next) || false}
+        hasMore={Boolean(resources?.links?.next) || false}
         loader={<Spinner />}
         scrollableTarget="scrollableDiv"
       >

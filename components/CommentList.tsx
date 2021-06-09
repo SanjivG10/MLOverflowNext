@@ -93,9 +93,9 @@ const CommentList: React.FC<IProps> = ({ comments, paper }) => {
       )}
 
       <InfiniteScroll
-        dataLength={data.results.length || 0}
+        dataLength={data?.results?.length || 0}
         next={fetchMoreComments}
-        hasMore={Boolean(data.links.next) || false}
+        hasMore={Boolean(data?.links?.next) || false}
         loader={<Spinner />}
       >
         {data.results.map((comment: IComment) => {
