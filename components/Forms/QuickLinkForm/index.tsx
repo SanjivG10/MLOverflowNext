@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { Button, Theme } from "@material-ui/core";
@@ -14,6 +14,7 @@ import { IQuickLink } from "../../QuickLinkList";
 import ValidationTextField from "../ValidationTextField";
 import { ValidationFormAttrs } from "./constants";
 import { isEmpty } from "../../../helper";
+import { UserContext } from "../../../pages/_app";
 
 interface IProps {
   successSubmit: (obj: any) => void;
@@ -71,6 +72,8 @@ const QuickLinkForm = ({ successSubmit, data }: IProps) => {
   const [desc, setDesc] = useState<string>("");
   const [image, setImage] = useState<File | null | string>(null);
   const [link, setLink] = useState<string>("");
+
+  const { state, dispatch } = useContext(UserContext);
 
   const [uploaded, setUploaded] = useState<string>("");
 
@@ -181,6 +184,11 @@ const QuickLinkForm = ({ successSubmit, data }: IProps) => {
   };
 
   const submitQuickLink = async () => {
+    if (!state.loginStatus) {
+      dispatch({ type: "toggleModal", show: true });
+      return;
+    }
+
     setPosting(true);
     if (data && data.id) {
       editQuickLink();
