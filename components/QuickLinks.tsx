@@ -67,9 +67,9 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
   }, [data]);
 
   const fetchMoreData = async () => {
-    if (data?.links?.next) {
-      const [newQuickLinks, error] = await useGet(data?.links?.next);
-      if (!isEmpty(data)) {
+    if (quickLinks?.links?.next) {
+      const [newQuickLinks, error] = await useGet(quickLinks?.links?.next);
+      if (!isEmpty(newQuickLinks)) {
         setQuickLinks({
           ...quickLinks,
           results: [...quickLinks.results, ...newQuickLinks.results],
@@ -87,9 +87,9 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
       )}
 
       <InfiniteScroll
-        dataLength={data?.results?.length || 0}
+        dataLength={quickLinks?.results?.length || 0}
         next={fetchMoreData}
-        hasMore={Boolean(data?.links?.next) || false}
+        hasMore={Boolean(quickLinks?.links?.next) || false}
         loader={<Spinner />}
       >
         <>
