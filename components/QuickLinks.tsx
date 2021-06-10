@@ -4,6 +4,10 @@ import Grid from "@material-ui/core/Grid";
 import { IQuickLink } from "./QuickLinkList";
 import Tooltip from "@material-ui/core/Tooltip";
 import Link from "next/link";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Spinner from "./Spinner";
+import { useGet } from "../hooks/requests";
+import { isEmpty } from "../helper";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -62,35 +66,59 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
     }
   }, [data]);
 
+  const fetchMoreData = async () => {
+    if (data?.links?.next) {
+      const [newQuickLinks, error] = await useGet(data?.links?.next);
+      if (!isEmpty(data)) {
+        setQuickLinks({
+          ...quickLinks,
+          results: [...quickLinks.results, ...newQuickLinks.results],
+        });
+      }
+    }
+  };
+
   return (
-    <Grid className={classes.root}>
+    <div className={classes.root}>
       {!original && (
         <Link href="/quicklinks">
           <h1 className={classes.mainLabel}>Quick Links</h1>
         </Link>
       )}
-      <Grid item>
-        <Grid container className={classes.container}>
-          {quickLinks?.results?.length === 0 && (
-            <h3 className={classes.noQuickLink}>no quick links found</h3>
-          )}
-          {quickLinks?.results?.map((item: IQuickLink) => (
-            <Link href={"/quicklinks/" + item.slug} key={item.id}>
-              <Tooltip title={item.name}>
-                <Grid key={item.id} item className={classes.eachLinkContainer}>
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className={classes.img}
-                    loading="lazy"
-                  />
-                </Grid>
-              </Tooltip>
-            </Link>
-          ))}
-        </Grid>
-      </Grid>
-    </Grid>
+
+      <InfiniteScroll
+        dataLength={data?.results?.length || 0}
+        next={fetchMoreData}
+        hasMore={Boolean(data?.links?.next) || false}
+        loader={<Spinner />}
+      >
+        <>
+          <Grid container className={classes.container}>
+            {quickLinks?.results?.length === 0 && (
+              <h3 className={classes.noQuickLink}>no quick links found</h3>
+            )}
+            {quickLinks?.results?.map((item: IQuickLink) => (
+              <Link href={"/quicklinks/" + item.slug} key={item.id}>
+                <Tooltip title={item.name}>
+                  <Grid
+                    key={item.id}
+                    item
+                    className={classes.eachLinkContainer}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className={classes.img}
+                      loading="lazy"
+                    />
+                  </Grid>
+                </Tooltip>
+              </Link>
+            ))}
+          </Grid>
+        </>
+      </InfiniteScroll>
+    </div>
   );
 };
 

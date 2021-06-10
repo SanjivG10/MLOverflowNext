@@ -14,8 +14,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
-    maxHeight: 200,
-    overflow: "auto",
   },
   url: {
     textDecoration: "none",

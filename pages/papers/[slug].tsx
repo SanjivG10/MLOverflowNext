@@ -188,6 +188,7 @@ const PaperPage: React.FC<{ _data: any; _resources: any; _comments: any }> = ({
 
   const [data, setData] = useState(_data);
   const [allResources, setAllResources] = useState(_resources);
+
   const [paperComments, setPaperComments] = useState(_comments);
 
   const { state, dispatch } = useContext(UserContext);
@@ -557,6 +558,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       RESOURCE_URL + `?paper=${data.id}`,
       getAuthHeadersFromCookie(context)
     );
+
+    console.log(resources, " are the resources ");
 
     _resources = resources;
   } catch (error) {}
