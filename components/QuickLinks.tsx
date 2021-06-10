@@ -68,10 +68,10 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
 
   const fetchMoreData = async () => {
     if (quickLinks?.links?.next) {
-      const [newQuickLinks, error] = await useGet(quickLinks?.links?.next);
+      const [newQuickLinks] = await useGet(quickLinks?.links?.next);
       if (!isEmpty(newQuickLinks)) {
         setQuickLinks({
-          ...quickLinks,
+          ...newQuickLinks,
           results: [...quickLinks.results, ...newQuickLinks.results],
         });
       }
