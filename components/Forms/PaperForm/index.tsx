@@ -295,7 +295,7 @@ export default function PaperForm({
 
       <TagForm
         placeholder={ValidationFormAttrs.author.placeholder}
-        length={50}
+        length={100}
         label={ValidationFormAttrs.author.label}
         maxNumber={AUTHOR_NUMBER}
         tags={authors}
@@ -407,7 +407,7 @@ export default function PaperForm({
 
       <TagForm
         placeholder={ValidationFormAttrs.tags.placeholder}
-        length={100}
+        length={50}
         label={ValidationFormAttrs.tags.label}
         maxNumber={TAGS_NUMBER}
         tags={tags}
