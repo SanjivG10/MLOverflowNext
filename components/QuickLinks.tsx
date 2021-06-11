@@ -99,7 +99,7 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
             )}
             {quickLinks?.results?.map((item: IQuickLink) => (
               <Link href={"/quicklinks/" + item.slug} key={item.id}>
-                <Tooltip title={item.name}>
+                <Tooltip className="removeScrollBar" title={item.name}>
                   <Grid
                     key={item.id}
                     item
