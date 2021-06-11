@@ -559,8 +559,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       getAuthHeadersFromCookie(context)
     );
 
-    console.log(resources, " are the resources ");
-
     _resources = resources;
   } catch (error) {}
 

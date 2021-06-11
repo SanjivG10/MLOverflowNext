@@ -9,7 +9,7 @@ import Spinner from "./Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Grid } from "@material-ui/core";
 import { useGet } from "../hooks/requests";
-import { isEmpty } from "../helper";
+import { getUniqueValues, isEmpty } from "../helper";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -86,9 +86,11 @@ export default function PapersList({
     if (papers?.links?.next) {
       const [data] = await useGet(papers.links.next);
       if (!isEmpty(data)) {
+        const results = [...papers.results, ...data.results];
+        const uniqueResults = getUniqueValues(results);
         setPapers({
           ...data,
-          results: [...papers.results, ...data.results],
+          results: uniqueResults,
         });
       }
     }

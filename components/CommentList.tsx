@@ -5,7 +5,7 @@ import Comment from "./Comment";
 import Spinner from "./Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useGet } from "../hooks/requests";
-import { isEmpty } from "../helper";
+import { getUniqueValues, isEmpty } from "../helper";
 
 interface IProps {
   comments: {
@@ -75,11 +75,13 @@ const CommentList: React.FC<IProps> = ({ comments, paper }) => {
 
   const fetchMoreComments = async () => {
     if (data.links.next) {
-      const [newComments, error] = await useGet(data.links.next);
+      const [newComments] = await useGet(data.links.next);
       if (!isEmpty(newComments)) {
+        const results = [...data.results, ...newComments.results];
+        const uniqueResults = getUniqueValues(results);
         setData({
           ...newComments,
-          results: [...data.results, ...newComments.results],
+          results: uniqueResults,
         });
       }
     }

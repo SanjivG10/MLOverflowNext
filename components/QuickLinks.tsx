@@ -7,7 +7,7 @@ import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Spinner from "./Spinner";
 import { useGet } from "../hooks/requests";
-import { isEmpty } from "../helper";
+import { getUniqueValues, isEmpty } from "../helper";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -71,10 +71,9 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
     if (quickLinks?.links?.next) {
       const [newQuickLinks] = await useGet(quickLinks?.links?.next);
       if (!isEmpty(newQuickLinks)) {
-        setQuickLinks({
-          ...newQuickLinks,
-          results: [...quickLinks.results, ...newQuickLinks.results],
-        });
+        const allResults = [...quickLinks.results, ...newQuickLinks.results];
+        const uniqueResults = getUniqueValues(allResults);
+        setQuickLinks({ ...newQuickLinks, results: uniqueResults });
       }
     }
   };

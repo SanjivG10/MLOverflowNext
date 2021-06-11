@@ -8,7 +8,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import Spinner from "./Spinner";
 import { IFeedsList } from "../pages/feeds";
 import { useGet } from "../hooks/requests";
-import { isEmpty } from "../helper";
+import { getUniqueValues, isEmpty } from "../helper";
 
 type FeedProps = {
   originalFeed?: boolean;
@@ -87,11 +87,13 @@ export default function FeedList({ originalFeed, data, home }: FeedProps) {
 
   const fetchMoreData = async () => {
     if (feedsData?.links?.next) {
-      const [data, error] = await useGet(feedsData.links.next);
+      const [data] = await useGet(feedsData.links.next);
       if (!isEmpty(data)) {
+        const results = [...feedsData.results, ...data.results];
+        const uniqueResults = getUniqueValues(results);
         setFeedsData({
           ...data,
-          results: [...feedsData.results, ...data.results],
+          results: uniqueResults,
         });
       }
     }

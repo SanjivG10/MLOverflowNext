@@ -6,6 +6,20 @@ function commonKeys(a: any, b: any) {
     });
 };
 
+export const getUniqueValues = (allResults: any) => {
+    const resultToPublish: any[] = [];
+    const idsList: number[] = [];
+    allResults.filter((item: any) => {
+        if (!idsList.includes(item.id)) {
+            resultToPublish.push(item);
+        } else {
+            idsList.push(item.id);
+        }
+    });
+
+    return resultToPublish;
+}
+
 export const getNewQuery = (queryParams: ParsedUrlQuery, newQueryParams: any) => {
     let allParams = { ...queryParams, ...newQueryParams };
     const keysCommon = commonKeys(queryParams, newQueryParams);

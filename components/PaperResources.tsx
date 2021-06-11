@@ -5,7 +5,7 @@ import MyModal from "./Modal";
 import DeleteForm from "./Delete";
 import { useDelete, useGet } from "../hooks/requests";
 import { RESOURCE_URL } from "../hooks/constants";
-import { isEmpty } from "../helper";
+import { getUniqueValues, isEmpty } from "../helper";
 import Spinner from "./Spinner";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { UserContext } from "../pages/_app";
@@ -103,11 +103,14 @@ const PaperResources: React.FC<IProps> = ({ data }: IProps) => {
 
   const fetchMoreResources = async () => {
     if (resources.links.next) {
-      const [newResources, error] = await useGet(resources.links.next);
+      const [newResources] = await useGet(resources.links.next);
+
+      const results = [...resources.results, ...newResources.results];
+      const uniqueResults = getUniqueValues(results);
       if (!isEmpty(newResources)) {
         setResources({
           ...newResources,
-          results: [...resources.results, ...newResources.results],
+          results: uniqueResults,
         });
       }
     }

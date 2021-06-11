@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { isEmpty } from "../helper";
+import { getUniqueValues, isEmpty } from "../helper";
 import { useGet } from "../hooks/requests";
 import Spinner from "./Spinner";
 import QuickLink from "./../components/QuickLink";
@@ -47,11 +47,13 @@ const QuickLinkList = ({ quickLinks }: IQuickLinkProps) => {
 
   const fetchMoreQuickLinks = async () => {
     if (quickLinksData.links.next) {
-      const [data, error] = await useGet(quickLinksData.links.next);
+      const [data] = await useGet(quickLinksData.links.next);
       if (!isEmpty(data)) {
+        const results = [...quickLinksData.results, ...data.results];
+        const uniqueResults = getUniqueValues(results);
         setQuickLinksData({
           ...data,
-          results: [...quickLinksData.results, ...data.results],
+          results: uniqueResults,
         });
       }
     }
