@@ -79,7 +79,7 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={`${classes.root} removeScrollBar`}>
       {!original && (
         <Link href="/quicklinks">
           <h1 className={classes.mainLabel}>Quick Links</h1>
@@ -93,7 +93,7 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
         loader={<Spinner />}
       >
         <>
-          <Grid container className={`${classes.container} removeScrollBar`}>
+          <Grid container className={classes.container}>
             {quickLinks?.results?.length === 0 && (
               <h3 className={classes.noQuickLink}>no quick links found</h3>
             )}
