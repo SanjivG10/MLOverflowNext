@@ -54,9 +54,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 20,
     fontStyle: "italic",
   },
-  tipTool: {
-    position: "fixed",
-  },
 }));
 
 const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
@@ -103,10 +100,7 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
             )}
             {quickLinks?.results?.map((item: IQuickLink) => (
               <Link href={"/quicklinks/" + item.slug} key={item.id}>
-                <Tooltip
-                  className={`${classes.tipTool} removeScrollBar`}
-                  title={item.name}
-                >
+                <Tooltip className={`removeScrollBar`} title={item.name}>
                   <Grid
                     key={item.id}
                     item
