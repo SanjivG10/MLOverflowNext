@@ -104,7 +104,7 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
             {quickLinks?.results?.map((item: IQuickLink) => (
               <Link href={"/quicklinks/" + item.slug} key={item.id}>
                 <Tooltip
-                  className={`${classes.tiptool} removeScrollBar`}
+                  className={`${classes.tipTool} removeScrollBar`}
                   title={item.name}
                 >
                   <Grid
