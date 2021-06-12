@@ -6,7 +6,12 @@ import Container from "@material-ui/core/Container";
 import { Filter } from "../../components/Filter";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { FEED_URL, HOME_URL, PUBLIC_MEDIA_URL } from "../../hooks/constants";
+import {
+  FEED_URL,
+  HOME_URL,
+  HOME_URL_OPEN_GRAPH,
+  PUBLIC_MEDIA_URL,
+} from "../../hooks/constants";
 import { getAuthHeadersFromCookie, useGet } from "../../hooks/requests";
 import { GetServerSideProps } from "next";
 import { IFeed } from "../../components/Feed";
@@ -112,7 +117,7 @@ const FeedPage = ({ feeds, err }: { feeds: IFeedsList; err: any }) => {
     description: FEED_LIST_TITLE,
     ogTitle: FEED_LIST_TITLE,
     image: "/logo_white.png",
-    url: HOME_URL + "feeds/",
+    url: HOME_URL_OPEN_GRAPH + "feeds/",
   };
 
   return (
