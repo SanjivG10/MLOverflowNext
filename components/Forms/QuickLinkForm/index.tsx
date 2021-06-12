@@ -287,7 +287,7 @@ const QuickLinkForm = ({ successSubmit, data }: IProps) => {
           error={slugError}
           setError={setSlugError}
           disabled={posting}
-          link="/quicklinks"
+          link="quicklinks"
         />
 
         {posting ? (
