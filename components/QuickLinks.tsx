@@ -73,6 +73,8 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
       if (!isEmpty(newQuickLinks)) {
         const allResults = [...quickLinks.results, ...newQuickLinks.results];
         const uniqueResults = getUniqueValues(allResults);
+        console.log(quickLinks.results, newQuickLinks.results);
+        console.log("NEW ", uniqueResults);
         setQuickLinks({ ...newQuickLinks, results: uniqueResults });
       }
     }
