@@ -58,7 +58,8 @@ const QuickLinksPage = () => {
     title: SLOGAN,
     description: SLOGAN_DESC,
     ogTitle: SLOGAN,
-    image: "/logo_white.png",
+    image:
+      "https://api.mloverflow.com/media/a76536e2-d488-49f5-b32d-f9f97f7b9dd4.JPG",
     url: HOME_URL_OPEN_GRAPH,
   };
 
