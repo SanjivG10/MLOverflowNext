@@ -12,8 +12,7 @@ export const getUniqueValues = (allResults: any) => {
     allResults.filter((item: any) => {
         if (!idsList.includes(item.id)) {
             resultToPublish.push(item);
-        } else {
-            idsList.push(item.id);
+            idsList.push(item.id)
         }
     });
 

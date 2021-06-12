@@ -69,12 +69,13 @@ const QuickLinks = ({ data, original }: { data: any; original: boolean }) => {
 
   const fetchMoreData = async () => {
     if (quickLinks?.links?.next) {
+      const allResults = [...quickLinks.results, ...quickLinks.results];
+      const uniqueResults = getUniqueValues(allResults);
+      console.log(uniqueResults, " is what we get");
       const [newQuickLinks] = await useGet(quickLinks?.links?.next);
       if (!isEmpty(newQuickLinks)) {
         const allResults = [...quickLinks.results, ...newQuickLinks.results];
         const uniqueResults = getUniqueValues(allResults);
-        console.log(quickLinks.results, newQuickLinks.results);
-        console.log("NEW ", uniqueResults);
         setQuickLinks({ ...newQuickLinks, results: uniqueResults });
       }
     }
