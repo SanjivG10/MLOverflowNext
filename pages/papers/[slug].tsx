@@ -169,6 +169,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginTop: 20,
   },
   commentList: {},
+  pwcContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 }));
 
 const PaperPage: React.FC<{ _data: any; _resources: any; _comments: any }> = ({
@@ -351,6 +356,20 @@ const PaperPage: React.FC<{ _data: any; _resources: any; _comments: any }> = ({
               </a>
             </div>
 
+            {data?.paper_with_code_link && (
+              <div className={classes.beautify}>
+                {specialLabel("/pwc.jpg", "PAPERS WITH CODE", classes, true)}
+                <a
+                  href={data.paper_with_code_link}
+                  className={classes.code}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {data.paper_with_code_link}
+                </a>
+              </div>
+            )}
+
             {data.codes &&
               data.codes.length > 0 &&
               data.codes[0].link &&
@@ -524,12 +543,21 @@ const PaperPage: React.FC<{ _data: any; _resources: any; _comments: any }> = ({
   );
 };
 
-const specialLabel = (icon: string, label: string, classes: ClassNameMap) => {
+const specialLabel = (
+  icon: string,
+  label: string,
+  classes: ClassNameMap,
+  full = false
+) => {
   return (
     <div>
       <div className={classes.specialLabel}>
         <div>
-          <img src={`/${icon}.svg`} alt="" className={classes.icon} />
+          <img
+            src={full ? icon : "/" + icon + ".svg"}
+            alt=""
+            className={classes.icon}
+          />
         </div>
         <div className={classes.label}>{label}</div>
       </div>
