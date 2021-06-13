@@ -20,6 +20,11 @@ export interface IPaper {
   slug: string;
   dataset?: string;
   model?: string;
+  resourcesCount: {
+    videoN?: number;
+    audioN?: number;
+    articleN?: number;
+  };
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -64,11 +69,24 @@ const useStyles = makeStyles((theme: Theme) =>
       height: 20,
       width: 20,
     },
+    resourcesList: {
+      display: "flex",
+    },
+    eachResource: {
+      display: "flex",
+      flexDirection: "row",
+      marginLeft: 10,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    rIcon: {
+      marginRight: 5,
+    },
   })
 );
 
 const Paper = (props: IPaper) => {
-  const { title, abstract, link, codes } = props;
+  const { title, abstract, link, codes, resourcesCount } = props;
   const classes = useStyles();
 
   return (
@@ -119,6 +137,35 @@ const Paper = (props: IPaper) => {
           )}
         </div>
       )}
+
+      <div className={classes.resourcesList}>
+        <div className={classes.eachResource}>
+          <img
+            className={`${classes.icon} ${classes.rIcon}`}
+            src="/video.svg"
+            alt=""
+          />
+          {resourcesCount?.videoN || 0}
+        </div>
+
+        <div className={classes.eachResource}>
+          <img
+            className={`${classes.icon} ${classes.rIcon}`}
+            src="/article.svg"
+            alt=""
+          />
+          {resourcesCount?.articleN || 0}
+        </div>
+
+        <div className={classes.eachResource}>
+          <img
+            className={`${classes.icon} ${classes.rIcon}`}
+            src="/audio.svg"
+            alt=""
+          />
+          {resourcesCount?.audioN || 0}
+        </div>
+      </div>
     </div>
   );
 };
