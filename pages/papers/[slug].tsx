@@ -573,7 +573,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   try {
     let { data } = await axios.get(
-      PAPER_URL + `${slug}/`,
+      PAPER_URL + `${slug}/?detail=${true}`,
       getAuthHeadersFromCookie(context)
     );
     _data = data;
